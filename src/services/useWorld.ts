@@ -1,31 +1,16 @@
-import { useEffect, useState } from "react"
-import { genWorld } from "../elements/World"
+import { genWorld, GenWorldOptions } from "../elements/World"
 import { useStore } from "./useStore"
 
-export const useWorlds = (id?: string) => {
-  const store = useStore()
-  const [elemId, setElemId] = useState<string>()
-  const [created, setCreated] = useState(false)
-
-  const create = (name: string) => {
-    const world = genWorld({ name })
-    store.worlds.push(world)
-    setElemId(elemId)
+export const useWorld = () => {
+  const [store, setStore] = useStore()
+  const { worlds } = store
+  return {
+    list: worlds,
+    create: (options: GenWorldOptions) => {
+      setStore({ worlds: [...worlds, genWorld(options)] })
+    },
+    findById: (id: string) => worlds.find((item) => item.id === id),
   }
-
-  useEffect(() => {
-    const getById = (id: string) => {
-      const world = store.worlds.find(w => w.id === id)
-      return world?.id
-    }
-    if (id) {
-      setElemId(getById(id))
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
-  useEffect(() => {
-    setCreated(!!elemId)
-  }, [elemId])
-
-  return { create, created }
 }
+
+export default useWorld

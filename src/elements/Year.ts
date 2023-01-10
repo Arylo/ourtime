@@ -3,7 +3,7 @@ import { genBaseElement, BaseElement } from "./BaseElement";
 export interface BaseYear {
   name: string,
   same?: [string, number][],
-  baseWorld: string[],
+  baseWorld: string,
 }
 
 export interface Year extends BaseElement, BaseYear { }

@@ -1,3 +1,5 @@
+import React from "react"
+import { dispatchStateContext, storeStateContext } from "../context/storeContext"
 import { People } from "../elements/People"
 import { World } from "../elements/World"
 import { Year } from "../elements/Year"
@@ -8,10 +10,13 @@ export interface Store {
   years: Year[],
 }
 
-const store: Store = {
+export const store: Store = {
   peoples: [],
   worlds: [],
   years: [],
 }
 
-export const useStore = () => store
+export const useStore = () => [
+  React.useContext(storeStateContext),
+  React.useContext(dispatchStateContext)
+] as [Store, React.Dispatch<Partial<Store>>];

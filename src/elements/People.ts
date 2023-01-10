@@ -1,9 +1,10 @@
 import { BaseElement, genBaseElement } from "./BaseElement";
 
 export interface BasePeople {
-  name: string
+  name: string[]
   from?: [string, number],
   to?: [string, number],
+  site?: string
 }
 
 export interface People extends BaseElement, BasePeople { }
