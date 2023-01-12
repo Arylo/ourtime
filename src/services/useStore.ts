@@ -1,19 +1,20 @@
+import { nanoid } from "nanoid"
 import React from "react"
 import { dispatchStateContext, storeStateContext } from "../context/storeContext"
-import { People } from "../elements/People"
-import { World } from "../elements/World"
-import { Year } from "../elements/Year"
+import { Store } from "../elements/Store"
 
-export interface Store {
-  peoples: People[],
-  worlds: World[],
-  years: Year[],
-}
-
+const worldId = nanoid()
 export const store: Store = {
   peoples: [],
-  worlds: [],
-  years: [],
+  worlds: [{
+    id: worldId,
+    name: '基轴世界',
+  }],
+  years: [{
+    id: '123',
+    name: 'AC',
+    baseWorld: worldId,
+  }],
 }
 
 export const useStore = () => [

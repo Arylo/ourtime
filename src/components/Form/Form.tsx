@@ -1,5 +1,6 @@
 import React from "react"
-import StyleSheet from "../../utils/StyleSheet"
+import Space from "../Space/Space"
+import View from "../View/View"
 
 export interface FormHeader<T> {
   title?: string,
@@ -10,25 +11,6 @@ export interface FormHeader<T> {
 export interface FormProps<T extends object> {
   data: T | undefined,
   headers: FormHeader<T>[]
-}
-
-const styles = {
-  container: StyleSheet({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  }),
-  label: StyleSheet({
-    flexBasis: 65,
-    flexGrow: 0,
-    flexShrink: 0,
-    paddingRight: 5,
-    textAlign: 'right',
-    alignSelf: 'center',
-  }),
-  value: StyleSheet({
-    flexGrow: 1
-  }),
 }
 
 function Form<T extends object>(opts: FormProps<T>) {
@@ -44,10 +26,10 @@ function Form<T extends object>(opts: FormProps<T>) {
   }
   return <>
     {headers.map((header, index) => {
-      return <div key={index} style={styles.container}>
-        <label style={styles.label}>{header.title || header.index}</label>
-        <div style={styles.value}>{(header.render || defaultRender)(data, header)}</div>
-      </div>
+      return <Space.Vertical key={index}>
+        <label>{header.title || header.index}</label>
+        <View>{(header.render || defaultRender)(data, header)}</View>
+      </Space.Vertical>
     })}
   </>
 }

@@ -1,26 +1,23 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
+import Hr from "../Hr/Hr";
+import Space from "../Space/Space";
+import View from "../View/View";
 
-const hrStyle: React.CSSProperties = {
-  marginTop: 2,
-  marginBottom: 2,
-  width: '100%',
-  height: 0,
-  borderBottomWidth: 1,
-  borderBottomColor: 'black',
-  borderBottomStyle: 'solid',
+export interface CollapseProps extends PropsWithChildren {
+  title: string,
 }
 
-const Collapse = (props: React.ComponentProps<"div">) => {
+const Collapse: React.FC<CollapseProps> = (props) => {
+  const { title } = props
   const [showMenu, setShowMenu] = React.useState(false)
   const toggleMenu = () => setShowMenu(!showMenu)
-  const { title } = props
-  return <div>
-    <div onClick={toggleMenu}>{title}</div>
+  return <Space.Vertical>
+    <View onClick={toggleMenu}>{title}</View>
     {showMenu ? <>
-      <div style={hrStyle} />
-      <div>{props.children}</div>
+      <Hr />
+      <View>{props.children}</View>
     </> : null}
-  </div>
+  </Space.Vertical>
 }
 
 export default Collapse

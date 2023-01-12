@@ -5,6 +5,8 @@ import Button from '../../components/Button/Button'
 import Collapse from '../../components/Collapse/Collapse'
 import Form, { FormHeader } from '../../components/Form/Form'
 import WorldItem from './WorldItem'
+import Zone from '../../components/View/Zone'
+import Input from '../../components/Input/Input'
 
 const WorldEditor = () => {
   const [world, setWorld] = React.useState<BaseWorld>()
@@ -21,21 +23,25 @@ const WorldEditor = () => {
     title: 'Name',
     index: 'name',
     render: (data, header) => {
-      return <input value={data?.[header.index]} onChange={(event) => onChnage(event, header.index)} />
+      return <Input value={data?.[header.index] ?? ''} onChange={(event) => onChnage(event, header.index)} />
     }
   }]
 
-  return <Collapse title='世界'>
-    <div>
-      <Form data={world} headers={headers} />
-      <Button onClick={addWorld}>+</Button>
-    </div>
-    {
-      worlds.map((world) => {
-        return <WorldItem key={world.id} world={world} />
-      })
-    }
-  </Collapse>
+  return <Zone>
+    <Collapse title='世界'>
+      <Zone>
+        <Form data={world} headers={headers} />
+        <Button onClick={addWorld}>Add</Button>
+      </Zone>
+      {
+        worlds.map((world, index) => {
+          return <Zone key={index}>
+            <WorldItem key={world.id} world={world} />
+          </Zone>
+        })
+      }
+    </Collapse>
+  </Zone>
 }
 
 export default WorldEditor
