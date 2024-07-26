@@ -1,7 +1,7 @@
-export type { ModelSchema } from './defineModel'
+export type { DefineModelParam, Model } from './defineModel'
 export { defineModel } from './defineModel'
 export { genCreateFn } from './genCreateFn'
-export type { DataType } from './DataTypes'
+export * from './DataTypes'
 export {
   DataTypes,
   StringDataType,
@@ -9,4 +9,5 @@ export {
   BooleanDataType,
   DateDataType,
   ObjectDataType,
+  IDDataType,
 } from './DataTypes'

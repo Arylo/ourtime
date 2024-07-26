@@ -1,19 +1,20 @@
-import { DataType } from "./DataTypes"
+import { DataType } from "./DataTypes/base"
 
-type ShortModelSchemaItem = DataType
-type FullModelSchemaItem = {
-  type: DataType,
+export type ModelSchemaItem<T extends DataType<any> = DataType<any>> = {
+  type: T,
   auto?: boolean,
   optional?: boolean,
 }
 
-export type ModelSchema = {
-  [key: string]: ShortModelSchemaItem | FullModelSchemaItem
+export type DefineModelParam = {
+  [key: string]: DataType<any> | ModelSchemaItem
 }
-type DefineModelParam = ModelSchema
 
-export type Model<M extends DefineModelParam> = {
-  [key in keyof M]: M[key] extends ShortModelSchemaItem ? { type: M[key] } : M[key]
+export type Model<M extends DefineModelParam = DefineModelParam> = {
+  [key in keyof M & string]:
+    M[key] extends ModelSchemaItem ? M[key] :
+    M[key] extends DataType<any> ? ModelSchemaItem<M[key]> :
+    never
 }
 
 export const defineModel = <T extends DefineModelParam>(model: T) => {
