@@ -1,0 +1,29 @@
+{
+  "name": "@ourtime/datatypes",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Data types and type definitions for ourtime",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "tsc --watch",
+    "test": "vitest --globals --environment node",
+    "test:run": "vitest run --globals --environment node",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "Aryle Yeung <arylo.open@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "@vitest/coverage-v8": "^4.0.16",
+    "rimraf": "^6.1.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  }
+}

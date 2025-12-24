@@ -1,0 +1,62 @@
+import { ulid } from 'ulid';
+import { StoryDate, fromStoryDate } from './StoryDate';
+import type { History } from './History';
+import type { Timeline } from './Timeline';
+
+/**
+ * HistoryTimelineRole - 事件与时间轴关系的角色枚举
+ */
+export enum HistoryTimelineRole {
+  OCCURRED_IN = 'occurred_in',
+}
+
+/**
+ * HistoryTimeline - 表示事件与时间轴之间的关系
+ */
+export interface HistoryTimeline {
+  id: string;
+  historyId: History['id'];
+  timelineId: Timeline['id'];
+  role: HistoryTimelineRole;
+}
+
+/**
+ * 创建一个新的 HistoryTimeline 对象
+ */
+export function createHistoryTimeline(data: {
+  historyId: History['id'];
+  timelineId: Timeline['id'];
+  role: HistoryTimelineRole;
+}): HistoryTimeline {
+  return {
+    id: ulid(),
+    historyId: data.historyId,
+    timelineId: data.timelineId,
+    role: data.role,
+  };
+}
+
+/**
+ * 从对象创建 HistoryTimeline 数据
+ */
+export function fromHistoryTimeline(data: Record<string, any>): HistoryTimeline {
+  if (!data.id || typeof data.id !== 'string') {
+    throw new Error('Invalid HistoryTimeline: id is required and must be a string');
+  }
+  if (!data.historyId || typeof data.historyId !== 'string') {
+    throw new Error('Invalid HistoryTimeline: historyId is required and must be a string');
+  }
+  if (!data.timelineId || typeof data.timelineId !== 'string') {
+    throw new Error('Invalid HistoryTimeline: timelineId is required and must be a string');
+  }
+  if (!data.role || !Object.values(HistoryTimelineRole).includes(data.role as HistoryTimelineRole)) {
+    throw new Error('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
+  }
+
+  return {
+    id: data.id,
+    historyId: data.historyId,
+    timelineId: data.timelineId,
+    role: data.role as HistoryTimelineRole,
+  };
+}

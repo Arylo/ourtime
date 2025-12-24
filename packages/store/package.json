@@ -1,0 +1,26 @@
+{
+  "name": "@ourtime/store",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Store of instance data for @ourtime/datatypes — example data for development and tests",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "clean": "rimraf dist",
+    "test": "vitest --globals --environment jsdom",
+    "test:run": "vitest run --globals --environment jsdom"
+  },
+  "dependencies": {
+    "@ourtime/datatypes": "^0.1.0",
+    "ulid": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "jsdom": "^25.0.1",
+    "rimraf": "^6.1.2",
+    "turbo": "^2.7.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  }
+}
