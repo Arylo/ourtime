@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "clean": "rimraf dist",
+    "dev": "tsc --watch",
     "test": "vitest --globals --environment jsdom",
     "test:run": "vitest run --globals --environment jsdom"
   },

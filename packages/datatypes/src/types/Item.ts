@@ -7,7 +7,8 @@ import { StoryDate, fromStoryDate } from './StoryDate';
 export interface Item {
   id: string;
   name: string;
-  description: string;
+  /** 物品描述 */
+  description?: string;
   createdAt?: StoryDate;
   endAt?: StoryDate;
   /** 是否已出场，默认 false */
@@ -19,7 +20,7 @@ export interface Item {
  */
 export function createItem(data: {
   name: string;
-  description: string;
+  description?: string;
   createdAt?: StoryDate;
   endAt?: StoryDate;
   appeared?: boolean;
@@ -44,7 +45,7 @@ export function fromItem(data: Record<string, any>): Item {
   if (!data.name || typeof data.name !== 'string') {
     throw new Error('Invalid Item: name is required and must be a string');
   }
-  if (!data.description || typeof data.description !== 'string') {
+  if (data.description !== undefined && typeof data.description !== 'string') {
     throw new Error('Invalid Item: description is required and must be a string');
   }
 

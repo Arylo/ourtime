@@ -11,7 +11,6 @@ import type { WorldTimeline } from './WorldTimeline';
 import type { WorldPlace } from './WorldPlace';
 import type { HistoryWho } from './HistoryWho';
 import type { HistoryPlace } from './HistoryPlace';
-import type { HistoryWorld } from './HistoryWorld';
 import type { HistoryTimeline } from './HistoryTimeline';
 import type { HistoryRelation } from './HistoryRelation';
 import type { HistoryOrganize } from './HistoryOrganize';
@@ -39,7 +38,6 @@ export type StoryDataType = {
   worldPlace: WorldPlace[];
   historyWho: HistoryWho[];
   historyPlace: HistoryPlace[];
-  historyWorld: HistoryWorld[];
   historyTimeline: HistoryTimeline[];
   historyOrganize: HistoryOrganize[];
   historyRelation: HistoryRelation[];
@@ -62,6 +60,32 @@ export interface Story {
   map: StoryDataType;
 }
 
+const getDefaultStoryData = (): StoryDataType => ({
+  world: [],
+  timeline: [],
+  items: [],
+  who: [],
+  Histories: [],
+  organizes: [],
+  places: [],
+  stories: [],
+  calendars: [],
+  worldWho: [],
+  worldTimeline: [],
+  worldPlace: [],
+  historyWho: [],
+  historyPlace: [],
+  historyTimeline: [],
+  historyOrganize: [],
+  historyRelation: [],
+  organizePlace: [],
+  organizeWho: [],
+  itemWho: [],
+  itemPlace: [],
+  itemOrganize: [],
+  itemWorld: [],
+})
+
 /**
  * 创建一个新的 Story 对象
  */
@@ -75,32 +99,7 @@ export function createStory(data: {
     name: data.name,
     description: data.description,
     summary: data.summary,
-    map: {
-      world: [],
-      timeline: [],
-      items: [],
-      who: [],
-      Histories: [],
-      organizes: [],
-      places: [],
-      stories: [],
-      calendars: [],
-      worldWho: [],
-      worldTimeline: [],
-      worldPlace: [],
-      historyWho: [],
-      historyPlace: [],
-      historyWorld: [],
-      historyTimeline: [],
-      historyOrganize: [],
-      historyRelation: [],
-      organizePlace: [],
-      organizeWho: [],
-      itemWho: [],
-      itemPlace: [],
-      itemOrganize: [],
-      itemWorld: [],
-    },
+    map: getDefaultStoryData(),
   };
 }
 
@@ -119,6 +118,6 @@ export function fromStory(data: Record<string, any>): Story {
     id: data.id,
     description: data.description,
     summary: data.summary,
-    map: data.map,
+    map: Object.assign({}, getDefaultStoryData(), data.map),
   };
 }

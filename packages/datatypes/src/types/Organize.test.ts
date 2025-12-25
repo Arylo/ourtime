@@ -95,13 +95,14 @@ describe('Organize', () => {
       expect(() => fromOrganize(organizeData)).toThrow('Invalid Organize: name is required and must be a string');
     });
 
-    it('当缺少description时应该抛出错误', () => {
+    it('当缺少description时应该可以正常创建', () => {
       const organizeData = {
         id: 'org_123',
         name: '测试组织',
       };
 
-      expect(() => fromOrganize(organizeData)).toThrow('Invalid Organize: description is required and must be a string');
+      const organize = fromOrganize(organizeData);
+      expect(organize.description).toBeUndefined();
     });
 
     it('当name不是字符串时应该抛出错误', () => {

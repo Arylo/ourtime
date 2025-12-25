@@ -18,7 +18,7 @@ export interface WorldWho {
   id: string;
   worldId: World['id'];
   whoId: Who['id'];
-  role?: WorldWhoRole;
+  role: WorldWhoRole; // Made required
   startAt?: StoryDate;
   endAt?: StoryDate;
 }
@@ -29,7 +29,7 @@ export interface WorldWho {
 export function createWorldWho(data: {
   worldId: World['id'];
   whoId: Who['id'];
-  role?: WorldWhoRole;
+  role: WorldWhoRole; // Made required
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): WorldWho {
@@ -37,7 +37,7 @@ export function createWorldWho(data: {
     id: ulid(),
     worldId: data.worldId,
     whoId: data.whoId,
-    role: data.role,
+    role: data.role, // Ensure role is passed
     startAt: data.startAt,
     endAt: data.endAt,
   };

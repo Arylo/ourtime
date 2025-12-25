@@ -1,4 +1,5 @@
 import { ulid } from 'ulid';
+import { match } from 'ts-pattern';
 import type { Timeline } from './Timeline';
 import type { Calendar } from './Calendar';
 
@@ -20,24 +21,22 @@ export type StoryDate = {
  */
 export function createStoryDate(data: Omit<StoryDate, 'id'>): StoryDate {
   const id = ulid();
-  // Unknown date: keep minimal fields
-  if (data.isUnknown === true) {
-    return {
+  return match(data)
+    .returnType<StoryDate>()
+    .with({ isUnknown: true }, () => ({
       id,
       timelineId: data.timelineId,
       isUnknown: true,
-    };
-  }
-
-  // Known date: ensure approx defaults to false when not provided
-  return {
-    id,
-    timelineId: data.timelineId,
-    calendarId: data.calendarId,
-    rangeStart: data.rangeStart,
-    rangeEnd: data.rangeEnd,
-    approx: data.approx ?? false,
-  };
+    }))
+    .narrow()
+    .otherwise((d) => ({
+      id,
+      timelineId: d.timelineId,
+      calendarId: d.calendarId,
+      rangeStart: d.rangeStart,
+      rangeEnd: d.rangeEnd,
+      approx: d.approx ?? false,
+    }));
 }
 
 /**

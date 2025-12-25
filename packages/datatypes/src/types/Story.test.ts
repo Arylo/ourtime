@@ -8,7 +8,7 @@ describe('Story entity', () => {
     const arrayKeys = [
       'world', 'timeline', 'items', 'who', 'Histories', 'organizes', 'places', 'stories',
       'calendars', 'worldWho', 'worldTimeline', 'worldPlace', 'historyWho',
-      'historyPlace', 'historyWorld', 'historyTimeline', 'historyOrganize', 'historyRelation',
+      'historyPlace', 'historyTimeline', 'historyOrganize', 'historyRelation',
       'organizePlace', 'itemWho', 'itemPlace', 'itemOrganize', 'itemWorld',
     ];
 
@@ -30,7 +30,7 @@ describe('Story entity', () => {
 
     expect(loaded.id).toBe(created.id);
     expect(loaded.name).toBe('demo');
-    expect(loaded.map).toBe(created.map);
+    expect(loaded.map).toStrictEqual(created.map);
   });
 
   it('fromStory throws when name missing', () => {

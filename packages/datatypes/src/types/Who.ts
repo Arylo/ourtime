@@ -8,7 +8,7 @@ import type { World } from './World';
 export interface Who {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   alias?: string[];
   bornAt?: StoryDate;
   diedAt?: StoryDate;
@@ -22,7 +22,7 @@ export interface Who {
  */
 export function createWho(data: {
   name: string;
-  description: string;
+  description?: string;
   alias?: string[];
   bornAt?: StoryDate;
   diedAt?: StoryDate;
@@ -51,18 +51,18 @@ export function fromWho(data: Record<string, any>): Who {
   if (!data.name || typeof data.name !== 'string') {
     throw new Error('Invalid Who: name is required and must be a string');
   }
-  if (!data.description || typeof data.description !== 'string') {
+  if (data.description !== undefined && typeof data.description !== 'string') {
     throw new Error('Invalid Who: description is required and must be a string');
   }
 
   return {
     id: data.id,
     name: data.name,
-    description: data.description,
     alias: data.alias,
     bornAt: data.bornAt ? fromStoryDate(data.bornAt) : undefined,
     diedAt: data.diedAt ? fromStoryDate(data.diedAt) : undefined,
     parents: data.parents,
     appeared: !!data.appeared,
+    description: data.description,
   };
 }

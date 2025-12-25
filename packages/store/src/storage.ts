@@ -1,7 +1,3 @@
-import {
-  Story, loadStory, newStory,
-} from '@ourtime/datatypes'
-
 function get (key: string) {
   return localStorage.getItem(key)
 }

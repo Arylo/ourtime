@@ -8,7 +8,7 @@ import type { Place } from './Place';
 export interface Organize {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   startAt?: StoryDate;
   endAt?: StoryDate;
   /** 是否已出场，默认 false */
@@ -20,7 +20,7 @@ export interface Organize {
  */
 export function createOrganize(data: {
   name: string;
-  description: string;
+  description?: string;
   startAt?: StoryDate;
   endAt?: StoryDate;
   appeared?: boolean;
@@ -45,7 +45,7 @@ export function fromOrganize(data: Record<string, any>): Organize {
   if (!data.name || typeof data.name !== 'string') {
     throw new Error('Invalid Organize: name is required and must be a string');
   }
-  if (!data.description || typeof data.description !== 'string') {
+  if (data.description !== undefined && typeof data.description !== 'string') {
     throw new Error('Invalid Organize: description is required and must be a string');
   }
 

@@ -80,14 +80,15 @@ describe('Item', () => {
       expect(() => fromItem(itemData)).toThrow('Invalid Item: name is required and must be a string');
     });
 
-    it('当缺少description时应该抛出错误', () => {
+    it('当缺少description时应该可以正常创建', () => {
       const itemData = {
         id: 'item_123',
         name: '测试物品',
         createdAt: createStoryDate({ timelineId: 't1',  rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
       };
 
-      expect(() => fromItem(itemData)).toThrow('Invalid Item: description is required and must be a string');
+      const item = fromItem(itemData);
+      expect(item.description).toBeUndefined();
     });
 
     it('当缺少createdAt时应该可以正常创建', () => {

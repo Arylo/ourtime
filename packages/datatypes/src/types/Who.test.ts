@@ -97,13 +97,14 @@ describe('Who', () => {
       expect(() => fromWho(whoData)).toThrow('Invalid Who: name is required and must be a string');
     });
 
-    it('当缺少description时应该抛出错误', () => {
+    it('当缺少description时应该可以正常创建', () => {
       const whoData = {
         id: 'who_123',
         name: '测试人物',
       };
 
-      expect(() => fromWho(whoData)).toThrow('Invalid Who: description is required and must be a string');
+      const who = fromWho(whoData);
+      expect(who.description).toBeUndefined();
     });
 
     it('当id不是字符串时应该抛出错误', () => {

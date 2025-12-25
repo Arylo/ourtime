@@ -43,15 +43,15 @@ describe('storage', () => {
 			expect(ids.length).toBe(1);
 		});
 
-		it('初始化默认数据（主世界/主时间线/故事开始/故事历）', () => {
+		it('初始化默认数据（故事世界/主线/故事开始/故事历）', () => {
 			const s = initStory();
 			const map = s.map as StoryDataType;
 
 			expect(map.world.length).toBe(1);
-			expect(map.world[0].name).toBe('主世界');
+			expect(map.world[0].name).toBe('故事世界');
 
 			expect(map.timeline.length).toBe(1);
-			expect(map.timeline[0].name).toBe('主时间线');
+			expect(map.timeline[0].name).toBe('主线');
 
 			// 历史事件与历法
 			expect(map.Histories.length).toBeGreaterThanOrEqual(1);
