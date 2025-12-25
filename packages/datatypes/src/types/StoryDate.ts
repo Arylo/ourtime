@@ -1,7 +1,9 @@
 import { ulid } from 'ulid';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import type { Timeline } from './Timeline';
 import type { Calendar } from './Calendar';
+
+export type ApproxType = 'year' | 'month' | 'day';
 
 /**
  * StoryDate - 表示故事中的一个日期
@@ -12,7 +14,7 @@ export type StoryDate = {
   calendarId?: Calendar['id'];
   rangeStart?: number;
   rangeEnd?: number;
-  approx?: boolean;
+  approx?: boolean | ApproxType;
   isUnknown?: true;
 }
 
@@ -27,6 +29,12 @@ export function createStoryDate(data: Omit<StoryDate, 'id'>): StoryDate {
       id,
       timelineId: data.timelineId,
       isUnknown: true,
+    }))
+    .with({ approx: P.union('year', 'month', 'day') }, (d) => ({
+      id,
+      timelineId: d.timelineId,
+      calendarId: d.calendarId!,
+      approx: d.approx,
     }))
     .narrow()
     .otherwise((d) => ({

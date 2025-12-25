@@ -100,4 +100,67 @@ describe('StoryDate', () => {
       expect(() => fromStoryDate({ id: '1', timelineId: 'timeline_123' })).toThrow('Invalid StoryDate: rangeStart and rangeEnd are required and must be numbers');
     });
   });
+
+  describe('边界测试', () => {
+    it('应该处理 rangeStart 和 rangeEnd 的极端值', () => {
+      const extremeStoryDate = createStoryDate({
+        timelineId: 'timeline_extreme',
+        rangeStart: Number.MIN_SAFE_INTEGER,
+        rangeEnd: Number.MAX_SAFE_INTEGER,
+        calendarId: 'extreme_calendar',
+      });
+
+      expect(extremeStoryDate.rangeStart).toBe(Number.MIN_SAFE_INTEGER);
+      expect(extremeStoryDate.rangeEnd).toBe(Number.MAX_SAFE_INTEGER);
+      expect(extremeStoryDate.calendarId).toBe('extreme_calendar');
+    });
+
+    it('应该处理负数范围', () => {
+      const negativeStoryDate = createStoryDate({
+        timelineId: 'timeline_negative',
+        rangeStart: -100,
+        rangeEnd: -50,
+        calendarId: 'negative_calendar',
+      });
+
+      expect(negativeStoryDate.rangeStart).toBe(-100);
+      expect(negativeStoryDate.rangeEnd).toBe(-50);
+      expect(negativeStoryDate.calendarId).toBe('negative_calendar');
+    });
+  });
+
+  describe('ApproxType 测试', () => {
+    it('应该正确处理 year 类型的 approx', () => {
+      const storyDate = createStoryDate({
+        timelineId: 'timeline_year',
+        calendarId: 'calendar_year',
+        approx: 'year',
+      });
+
+      expect(storyDate.approx).toBe('year');
+      expect(storyDate.calendarId).toBe('calendar_year');
+    });
+
+    it('应该正确处理 month 类型的 approx', () => {
+      const storyDate = createStoryDate({
+        timelineId: 'timeline_month',
+        calendarId: 'calendar_month',
+        approx: 'month',
+      });
+
+      expect(storyDate.approx).toBe('month');
+      expect(storyDate.calendarId).toBe('calendar_month');
+    });
+
+    it('应该正确处理 day 类型的 approx', () => {
+      const storyDate = createStoryDate({
+        timelineId: 'timeline_day',
+        calendarId: 'calendar_day',
+        approx: 'day',
+      });
+
+      expect(storyDate.approx).toBe('day');
+      expect(storyDate.calendarId).toBe('calendar_day');
+    });
+  });
 });
