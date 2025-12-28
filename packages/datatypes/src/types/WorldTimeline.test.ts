@@ -15,6 +15,18 @@ describe('WorldTimeline', () => {
       expect(worldTimeline.worldId).toBe('world_123');
       expect(worldTimeline.timelineId).toBe('timeline_123');
     });
+
+    it('当缺少worldId时应该抛出错误', () => {
+      expect(() => createWorldTimeline({
+        timelineId: 'timeline_123',
+      } as any)).toThrow('Invalid WorldTimeline: worldId is required and must be a string');
+    });
+
+    it('当缺少timelineId时应该抛出错误', () => {
+      expect(() => createWorldTimeline({
+        worldId: 'world_123',
+      } as any)).toThrow('Invalid WorldTimeline: timelineId is required and must be a string');
+    });
   });
 
   describe('fromWorldTimeline', () => {

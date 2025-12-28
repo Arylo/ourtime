@@ -32,6 +32,7 @@ export function createItemOrganize(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): ItemOrganize {
+  validateItemOrganize(data);
   return {
     id: ulid(),
     itemId: data.itemId,
@@ -49,15 +50,7 @@ export function fromItemOrganize(data: Record<string, any>): ItemOrganize {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemOrganize: id is required and must be a string');
   }
-  if (!data.itemId || typeof data.itemId !== 'string') {
-    throw new Error('Invalid ItemOrganize: itemId is required and must be a string');
-  }
-  if (!data.organizeId || typeof data.organizeId !== 'string') {
-    throw new Error('Invalid ItemOrganize: organizeId is required and must be a string');
-  }
-  if (!data.role || !Object.values(ItemOrganizeRole).includes(data.role as ItemOrganizeRole)) {
-    throw new Error('Invalid ItemOrganize: role is required and must be a valid ItemOrganizeRole');
-  }
+  validateItemOrganize(data);
 
   return {
     id: data.id,
@@ -67,4 +60,17 @@ export function fromItemOrganize(data: Record<string, any>): ItemOrganize {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateItemOrganize(data: Record<string, any>) {
+  if (!data.itemId || typeof data.itemId !== 'string') {
+    throw new Error('Invalid ItemOrganize: itemId is required and must be a string');
+  }
+  if (!data.organizeId || typeof data.organizeId !== 'string') {
+    throw new Error('Invalid ItemOrganize: organizeId is required and must be a string');
+  }
+  if (!data.role || !Object.values(ItemOrganizeRole).includes(data.role as ItemOrganizeRole)) {
+    throw new Error('Invalid ItemOrganize: role is required and must be a valid ItemOrganizeRole');
+  }
+  return true;
 }

@@ -33,6 +33,7 @@ export function createItemPlace(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): ItemPlace {
+  validateItemPlace(data);
   return {
     id: ulid(),
     itemId: data.itemId,
@@ -50,15 +51,7 @@ export function fromItemPlace(data: Record<string, any>): ItemPlace {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemPlace: id is required and must be a string');
   }
-  if (!data.itemId || typeof data.itemId !== 'string') {
-    throw new Error('Invalid ItemPlace: itemId is required and must be a string');
-  }
-  if (!data.placeId || typeof data.placeId !== 'string') {
-    throw new Error('Invalid ItemPlace: placeId is required and must be a string');
-  }
-  if (!data.role || !Object.values(ItemPlaceRole).includes(data.role as ItemPlaceRole)) {
-    throw new Error('Invalid ItemPlace: role is required and must be a valid ItemPlaceRole');
-  }
+  validateItemPlace(data);
 
   return {
     id: data.id,
@@ -68,4 +61,17 @@ export function fromItemPlace(data: Record<string, any>): ItemPlace {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateItemPlace(data: Record<string, any>) {
+  if (!data.itemId || typeof data.itemId !== 'string') {
+    throw new Error('Invalid ItemPlace: itemId is required and must be a string');
+  }
+  if (!data.placeId || typeof data.placeId !== 'string') {
+    throw new Error('Invalid ItemPlace: placeId is required and must be a string');
+  }
+  if (!data.role || !Object.values(ItemPlaceRole).includes(data.role as ItemPlaceRole)) {
+    throw new Error('Invalid ItemPlace: role is required and must be a valid ItemPlaceRole');
+  }
+  return true;
 }

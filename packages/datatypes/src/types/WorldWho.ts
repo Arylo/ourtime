@@ -24,15 +24,27 @@ export interface WorldWho {
 }
 
 /**
+ * 验证 WorldWho 的 role 字段
+ */
+function validateWorldWho(data: Record<string, any>) {
+  if (!data.worldId || typeof data.worldId !== 'string') {
+    throw new Error('Invalid WorldWho: worldId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid WorldWho: whoId is required and must be a string');
+  }
+  if (!data.role || !Object.values(WorldWhoRole).includes(data.role as WorldWhoRole)) {
+    throw new Error('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
+  }
+  return true;
+}
+
+/**
  * 创建一个新的 WorldWho 对象
  */
-export function createWorldWho(data: {
-  worldId: World['id'];
-  whoId: Who['id'];
-  role: WorldWhoRole; // Made required
-  startAt?: StoryDate;
-  endAt?: StoryDate;
-}): WorldWho {
+export function createWorldWho(data: Omit<WorldWho, 'id'>): WorldWho {
+  validateWorldWho(data);
+
   return {
     id: ulid(),
     worldId: data.worldId,
@@ -50,12 +62,7 @@ export function fromWorldWho(data: Record<string, any>): WorldWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid WorldWho: id is required and must be a string');
   }
-  if (!data.worldId || typeof data.worldId !== 'string') {
-    throw new Error('Invalid WorldWho: worldId is required and must be a string');
-  }
-  if (!data.whoId || typeof data.whoId !== 'string') {
-    throw new Error('Invalid WorldWho: whoId is required and must be a string');
-  }
+  validateWorldWho(data);
 
   return {
     id: data.id,

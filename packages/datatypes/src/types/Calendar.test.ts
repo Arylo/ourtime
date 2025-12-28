@@ -2,10 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   createCalendar,
   fromCalendar,
-  getTotalDaysInYear,
-  getMonthsPerYear,
-  getMonthByIndex,
-  findMonthIndex,
 } from './Calendar';
 
 describe('Calendar', () => {
@@ -85,23 +81,58 @@ describe('Calendar', () => {
       expect(calendar.months!.length).toBe(3);
     });
 
+    it('应该创建一个带有别名的历法', () => {
+      const calendar = createCalendar({
+        name: 'Calendar with Aliases',
+        alias: ['别名历法', 'Alternative Calendar'],
+        description: '这是一个带有别名的历法',
+        months: [
+          { name: 'First', days: 30 },
+          { name: 'Second', days: 31 },
+        ],
+      });
+
+      expect(calendar.id).toBeDefined();
+      expect(calendar.name).toBe('Calendar with Aliases');
+      expect(calendar.alias).toEqual(['别名历法', 'Alternative Calendar']);
+      expect(calendar.description).toBe('这是一个带有别名的历法');
+      expect(calendar.months).toBeDefined();
+      expect(calendar.months!.length).toBe(2);
+    });
+
+    it('应该创建一个没有别名的历法', () => {
+      const calendar = createCalendar({
+        name: 'Calendar without Aliases',
+        description: '这是一个没有别名的历法',
+        months: [
+          { name: 'First', days: 30 },
+          { name: 'Second', days: 31 },
+        ],
+      });
+
+      expect(calendar.id).toBeDefined();
+      expect(calendar.name).toBe('Calendar without Aliases');
+      expect(calendar.alias).toBeUndefined();
+      expect(calendar.description).toBe('这是一个没有别名的历法');
+      expect(calendar.months).toBeDefined();
+      expect(calendar.months!.length).toBe(2);
+    });
+
     it('应该在提供空月份数组时抛出错误', () => {
       expect(() => {
         createCalendar({
           name: 'Invalid Calendar',
           months: [],
         });
-      }).toThrow('Invalid Calendar: if months is provided, it must have at least one month');
+      }).toThrow('Invalid Calendar: months is required and must be a non-empty array');
     });
 
-    it('应该允许不提供月份', () => {
-      const calendar = createCalendar({
-        name: 'Calendar Without Months',
-      });
-
-      expect(calendar.id).toBeDefined();
-      expect(calendar.name).toBe('Calendar Without Months');
-      expect(calendar.months).toBeUndefined();
+    it('不应该允许不提供月份', () => {
+      expect(() => {
+        createCalendar({
+          name: 'Calendar Without Months',
+        } as any);
+      }).toThrow('Invalid Calendar: months is required and must be a non-empty array');
     });
 
     it('应该在月份名称缺失时抛出错误', () => {
@@ -159,6 +190,49 @@ describe('Calendar', () => {
       expect(calendar.months![0].days).toBe(30);
     });
 
+    it('应该从对象创建带有别名的 Calendar', () => {
+      const data = {
+        id: 'test-id-2',
+        name: 'Calendar with Aliases',
+        alias: ['别名历法', 'Alternative Calendar'],
+        description: '这是一个带有别名的历法',
+        months: [
+          { name: 'First', days: 30 },
+          { name: 'Second', days: 31 },
+        ],
+      };
+
+      const calendar = fromCalendar(data);
+
+      expect(calendar.id).toBe('test-id-2');
+      expect(calendar.name).toBe('Calendar with Aliases');
+      expect(calendar.alias).toEqual(['别名历法', 'Alternative Calendar']);
+      expect(calendar.description).toBe('这是一个带有别名的历法');
+      expect(calendar.months).toBeDefined();
+      expect(calendar.months!.length).toBe(2);
+    });
+
+    it('应该从对象创建没有别名的 Calendar', () => {
+      const data = {
+        id: 'test-id-3',
+        name: 'Calendar without Aliases',
+        description: '这是一个没有别名的历法',
+        months: [
+          { name: 'First', days: 30 },
+          { name: 'Second', days: 31 },
+        ],
+      };
+
+      const calendar = fromCalendar(data);
+
+      expect(calendar.id).toBe('test-id-3');
+      expect(calendar.name).toBe('Calendar without Aliases');
+      expect(calendar.alias).toBeUndefined();
+      expect(calendar.description).toBe('这是一个没有别名的历法');
+      expect(calendar.months).toBeDefined();
+      expect(calendar.months!.length).toBe(2);
+    });
+
     it('应该在缺少 id 时抛出错误', () => {
       expect(() => {
         fromCalendar({
@@ -184,137 +258,16 @@ describe('Calendar', () => {
           name: 'Test',
           months: [],
         });
-      }).toThrow('Invalid Calendar: if months is provided, it must be a non-empty array');
+      }).toThrow('Invalid Calendar: months is required and must be a non-empty array');
     });
 
-    it('应该允许不提供 months', () => {
-      const calendar = fromCalendar({
-        id: 'test-id',
-        name: 'Test',
-      });
-
-      expect(calendar.id).toBe('test-id');
-      expect(calendar.name).toBe('Test');
-      expect(calendar.months).toBeUndefined();
-    });
-  });
-
-  describe('getTotalDaysInYear', () => {
-    it('应该计算一年的总天数', () => {
-      const calendar = createCalendar({
-        name: 'Test Calendar',
-        months: [
-          { name: 'January', days: 31 },
-          { name: 'February', days: 28 },
-          { name: 'March', days: 31 },
-          { name: 'April', days: 30 },
-          { name: 'May', days: 31 },
-          { name: 'June', days: 30 },
-          { name: 'July', days: 31 },
-          { name: 'August', days: 31 },
-          { name: 'September', days: 30 },
-          { name: 'October', days: 31 },
-          { name: 'November', days: 30 },
-          { name: 'December', days: 31 },
-        ],
-      });
-
-      expect(getTotalDaysInYear(calendar)).toBe(365);
-    });
-  });
-
-  describe('getMonthsPerYear', () => {
-    it('应该返回月份数量', () => {
-      const calendar = createCalendar({
-        name: 'Test Calendar',
-        months: [
-          { name: 'First', days: 30 },
-          { name: 'Second', days: 30 },
-          { name: 'Third', days: 30 },
-        ],
-      });
-
-      expect(getMonthsPerYear(calendar)).toBe(3);
-    });
-  });
-
-  describe('getMonthByIndex', () => {
-    const calendar = createCalendar({
-      name: 'Test Calendar',
-      months: [
-        { name: '正月', alias: ['端月'], days: 30 },
-        { name: '二月', days: 28 },
-        { name: '三月', days: 31 },
-      ],
-    });
-
-    it('应该根据索引获取月份', () => {
-      const month = getMonthByIndex(calendar, 0);
-      expect(month).toBeDefined();
-      expect(month?.name).toBe('正月');
-      expect(month?.alias).toEqual(['端月']);
-      expect(month?.days).toBe(30);
-    });
-
-    it('应该在索引超出范围时返回 undefined', () => {
-      expect(getMonthByIndex(calendar, -1)).toBeUndefined();
-      expect(getMonthByIndex(calendar, 10)).toBeUndefined();
-    });
-  });
-
-  describe('findMonthIndex', () => {
-    const calendar = createCalendar({
-      name: 'Test Calendar',
-      months: [
-        { name: '正月', alias: ['端月'], days: 30 },
-        { name: '二月', days: 28 },
-        { name: '三月', days: 31 },
-      ],
-    });
-
-    it('应该根据名称查找月份索引', () => {
-      expect(findMonthIndex(calendar, '正月')).toBe(0);
-      expect(findMonthIndex(calendar, '二月')).toBe(1);
-      expect(findMonthIndex(calendar, '三月')).toBe(2);
-    });
-
-    it('应该根据别名查找月份索引', () => {
-      expect(findMonthIndex(calendar, '端月')).toBe(0);
-    });
-
-    it('应该在找不到时返回 -1', () => {
-      expect(findMonthIndex(calendar, '不存在的月份')).toBe(-1);
-    });
-  });
-
-  describe('Calendar 使用场景', () => {
-    it('应该支持不规则的月份天数', () => {
-      const calendar = createCalendar({
-        name: 'Irregular Calendar',
-        months: [
-          { name: 'Long Month', days: 90 },
-          { name: 'Medium Month', days: 91 },
-          { name: 'Short Month', days: 92 },
-          { name: 'Another Month', days: 92 },
-        ],
-      });
-
-      expect(getTotalDaysInYear(calendar)).toBe(365);
-      expect(getMonthsPerYear(calendar)).toBe(4);
-    });
-
-    it('应该支持月份的多个别名', () => {
-      const calendar = createCalendar({
-        name: 'Multi-Alias Calendar',
-        months: [
-          { name: 'September', alias: ['Sep', 'Sept', '九月'], days: 30 },
-        ],
-      });
-
-      expect(findMonthIndex(calendar, 'September')).toBe(0);
-      expect(findMonthIndex(calendar, 'Sep')).toBe(0);
-      expect(findMonthIndex(calendar, 'Sept')).toBe(0);
-      expect(findMonthIndex(calendar, '九月')).toBe(0);
+    it('不应该允许不提供 months', () => {
+      expect(() => {
+        fromCalendar({
+          id: 'test-id',
+          name: 'Test',
+        });
+      }).toThrow('Invalid Calendar: months is required and must be a non-empty array');
     });
   });
 });

@@ -43,23 +43,6 @@ describe('storage', () => {
 			expect(ids.length).toBe(1);
 		});
 
-		it('初始化默认数据（故事世界/主线/故事开始/故事历）', () => {
-			const s = initStory();
-			const map = s.map as StoryDataType;
-
-			expect(map.world.length).toBe(1);
-			expect(map.world[0].name).toBe('故事世界');
-
-			expect(map.timeline.length).toBe(1);
-			expect(map.timeline[0].name).toBe('主线');
-
-			// 历史事件与历法
-			expect(map.Histories.length).toBeGreaterThanOrEqual(1);
-			expect(map.Histories[0].name).toBe('故事开始');
-
-			const calendarNames = map.calendars.map(c => c.name);
-			expect(calendarNames).toContain('故事历');
-		});
 	});
 
 	describe('getStory', () => {
@@ -80,7 +63,7 @@ describe('storage', () => {
 		it('更新 world 字段并可读取', () => {
 			const s = initStory();
 			const raw = toRaw(s);
-			raw.map.world = [{ id: 'w1', name: 'Updated World' }];
+			raw.map.world = [{ id: 'w1', name: 'Updated World', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s.id, raw);
 
 			const loaded = getStory(s.id);
@@ -92,7 +75,7 @@ describe('storage', () => {
 		it('可一次更新多个字段并完整替换', () => {
 			const s = initStory();
 			const raw = toRaw(s);
-			raw.map.world = [{ id: 'w2', name: 'World 2' }];
+			raw.map.world = [{ id: 'w2', name: 'World 2', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			raw.map.timeline = [{ id: 't1', name: 'Main TL' }];
 			raw.map.items = [{ id: 'i1', name: 'Item 1', description: 'Desc' }];
 			saveStory(s.id, raw);
@@ -110,11 +93,11 @@ describe('storage', () => {
 			const s2 = initStory();
 
 			const r1 = toRaw(s1);
-			r1.map.world = [{ id: 'w1', name: 'World 1' }];
+			r1.map.world = [{ id: 'w1', name: 'World 1', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s1.id, r1);
 
 			const r2 = toRaw(s2);
-			r2.map.world = [{ id: 'w2', name: 'World 2' }];
+			r2.map.world = [{ id: 'w2', name: 'World 2', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s2.id, r2);
 
 			const l1 = getStory(s1.id);

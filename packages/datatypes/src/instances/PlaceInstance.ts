@@ -38,12 +38,23 @@ export class PlaceInstance {
       .otherwise(() => {
         throw new Error('Invalid placeOrId parameter');
       });
-    const worldPlaceExists = this.story.map.worldPlace.some(wp => wp.worldId === this.world.id && wp.placeId === this.id);
-    if (!worldPlaceExists) {
-      this.story.map.worldPlace.push(createWorldPlace({
-        worldId: this.world.id,
-        placeId: this.id,
-      }));
+
+    const currentPlace = this.toObject();
+    if (!currentPlace.locatedId) {
+      const worldPlaceExists = this.story.map.worldPlace.some(wp => wp.worldId === this.world.id && wp.placeId === this.id);
+      if (!worldPlaceExists) {
+        this.story.map.worldPlace.push(createWorldPlace({
+          worldId: this.world.id,
+          placeId: this.id,
+        }));
+      }
     }
+  }
+
+  public appendSubPlace (data: Omit<Parameters<typeof createPlace>[0], 'locatedId'>) {
+    return new PlaceInstance(this.story, this.world, {
+      ...data,
+      locatedId: this.id,
+    });
   }
 }

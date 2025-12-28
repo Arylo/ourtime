@@ -7,7 +7,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
     "dev": "tsc --watch",
     "test": "vitest --globals --environment node",
     "test:run": "vitest run --globals --environment node",

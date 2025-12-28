@@ -5,8 +5,8 @@ import { createStoryDate } from './StoryDate';
 describe('Place', () => {
   describe('createPlace', () => {
     it('应该创建一个带有ULID的Place对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const place = createPlace({
         name: '测试地点',
         locatedId: 'parent_place_123',
@@ -43,12 +43,35 @@ describe('Place', () => {
       });
       expect(place.locatedId).toBe('parent_place_123');
     });
+
+    it('应该创建带有description的Place对象', () => {
+      const place = createPlace({
+        name: '测试地点',
+        description: '这是一个测试地点的详细描述',
+      });
+
+      expect(place).toBeDefined();
+      expect(place.id).toBeDefined();
+      expect(place.name).toBe('测试地点');
+      expect(place.description).toBe('这是一个测试地点的详细描述');
+    });
+
+    it('应该创建没有description的Place对象', () => {
+      const place = createPlace({
+        name: '测试地点',
+      });
+
+      expect(place).toBeDefined();
+      expect(place.id).toBeDefined();
+      expect(place.name).toBe('测试地点');
+      expect(place.description).toBeUndefined();
+    });
   });
 
   describe('fromPlace', () => {
     it('应该从对象创建Place对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const placeData = {
         id: 'place_123',
         name: '测试地点',
@@ -81,6 +104,35 @@ describe('Place', () => {
       expect(place.locatedId).toBeUndefined();
       expect(place.startAt).toBeUndefined();
       expect(place.endAt).toBeUndefined();
+    });
+
+    it('应该从带有description的对象创建Place对象', () => {
+      const placeData = {
+        id: 'place_123',
+        name: '测试地点',
+        description: '这是一个测试地点的详细描述',
+      };
+
+      const place = fromPlace(placeData);
+
+      expect(place).toBeDefined();
+      expect(place.id).toBe('place_123');
+      expect(place.name).toBe('测试地点');
+      expect(place.description).toBe('这是一个测试地点的详细描述');
+    });
+
+    it('应该从没有description的对象创建Place对象', () => {
+      const placeData = {
+        id: 'place_123',
+        name: '测试地点',
+      };
+
+      const place = fromPlace(placeData);
+
+      expect(place).toBeDefined();
+      expect(place.id).toBe('place_123');
+      expect(place.name).toBe('测试地点');
+      expect(place.description).toBeUndefined();
     });
 
     it('当缺少id时应该抛出错误', () => {
@@ -142,8 +194,8 @@ describe('Place', () => {
 
   describe('Place接口', () => {
     it('应该符合Place接口定义', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const place: Place = {
         id: 'place_123',
         name: '测试地点',

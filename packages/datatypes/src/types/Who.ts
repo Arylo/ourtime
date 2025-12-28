@@ -1,5 +1,4 @@
 import { ulid } from 'ulid';
-import { StoryDate, fromStoryDate } from './StoryDate';
 import type { World } from './World';
 
 /**
@@ -10,8 +9,6 @@ export interface Who {
   name: string;
   description?: string;
   alias?: string[];
-  bornAt?: StoryDate;
-  diedAt?: StoryDate;
   parents?: Who['id'][];
   /** 是否已出场，默认 false */
   appeared?: boolean;
@@ -24,8 +21,6 @@ export function createWho(data: {
   name: string;
   description?: string;
   alias?: string[];
-  bornAt?: StoryDate;
-  diedAt?: StoryDate;
   parents?: Who['id'][];
   appeared?: boolean;
 }): Who {
@@ -34,8 +29,6 @@ export function createWho(data: {
     name: data.name,
     description: data.description,
     alias: data.alias,
-    bornAt: data.bornAt,
-    diedAt: data.diedAt,
     parents: data.parents,
     appeared: data.appeared ?? false,
   };
@@ -59,8 +52,6 @@ export function fromWho(data: Record<string, any>): Who {
     id: data.id,
     name: data.name,
     alias: data.alias,
-    bornAt: data.bornAt ? fromStoryDate(data.bornAt) : undefined,
-    diedAt: data.diedAt ? fromStoryDate(data.diedAt) : undefined,
     parents: data.parents,
     appeared: !!data.appeared,
     description: data.description,

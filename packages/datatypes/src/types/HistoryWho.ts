@@ -34,6 +34,7 @@ export function createHistoryWho(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): HistoryWho {
+  validateHistoryWho(data);
   return {
     id: ulid(),
     historyId: data.historyId,
@@ -51,15 +52,7 @@ export function fromHistoryWho(data: Record<string, any>): HistoryWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryWho: id is required and must be a string');
   }
-  if (!data.historyId || typeof data.historyId !== 'string') {
-    throw new Error('Invalid HistoryWho: historyId is required and must be a string');
-  }
-  if (!data.whoId || typeof data.whoId !== 'string') {
-    throw new Error('Invalid HistoryWho: whoId is required and must be a string');
-  }
-  if (!data.role || !Object.values(HistoryWhoRole).includes(data.role as HistoryWhoRole)) {
-    throw new Error('Invalid HistoryWho: role is required and must be a valid HistoryWhoRole');
-  }
+  validateHistoryWho(data);
 
   return {
     id: data.id,
@@ -69,4 +62,17 @@ export function fromHistoryWho(data: Record<string, any>): HistoryWho {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateHistoryWho(data: Record<string, any>) {
+  if (!data.historyId || typeof data.historyId !== 'string') {
+    throw new Error('Invalid HistoryWho: historyId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid HistoryWho: whoId is required and must be a string');
+  }
+  if (!data.role || !Object.values(HistoryWhoRole).includes(data.role as HistoryWhoRole)) {
+    throw new Error('Invalid HistoryWho: role is required and must be a valid HistoryWhoRole');
+  }
+  return true;
 }

@@ -18,7 +18,7 @@ describe('Timeline', () => {
     });
 
     it('应该创建一个带有baseOn和baseAt的Timeline对象', () => {
-      const baseAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const baseAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const timeline = createTimeline({
         name: '子时间线',
         baseOn: 'parent_timeline_123',
@@ -41,7 +41,7 @@ describe('Timeline', () => {
     });
 
     it('当只提供baseAt时应该抛出错误', () => {
-      const baseAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const baseAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       expect(() => createTimeline({
         name: '测试时间线',
         baseAt,
@@ -86,7 +86,7 @@ describe('Timeline', () => {
     });
 
     it('应该从带有baseOn和baseAt的对象创建Timeline对象', () => {
-      const baseAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const baseAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const timelineData = {
         id: 'timeline_123',
         name: '子时间线',
@@ -172,7 +172,7 @@ describe('Timeline', () => {
     });
 
     it('应该符合带有baseOn和baseAt的Timeline接口定义', () => {
-      const baseAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const baseAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const timeline: Timeline = {
         id: 'timeline_123',
         name: '子时间线',

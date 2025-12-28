@@ -5,7 +5,7 @@ import { createStory } from './Story';
 
 describe('HistoryRelation', () => {
   it('should create a relation with optional date value', () => {
-    const date = createStoryDate({ rangeStart: 0, rangeEnd: 0, timelineId: 'tl1', calendarId: 'cal1' });
+    const date = createStoryDate({ rangeStart: 0, rangeEnd: 0, calendarId: 'cal1' });
     const relation = createHistoryRelation({
       fromHistoryId: 'e1',
       toHistoryId: 'e2',
@@ -24,7 +24,7 @@ describe('HistoryRelation', () => {
       fromHistoryId: 'e1',
       toHistoryId: 'e2',
       type: HistoryRelationType.AFTER,
-      value: { id: 'sd1', rangeStart: 1, rangeEnd: 2, timelineId: 'tl1', calendarId: 'cal1' },
+      value: { id: 'sd1', rangeStart: 1, rangeEnd: 2, calendarId: 'cal1' },
     });
 
     expect(relation.type).toBe(HistoryRelationType.AFTER);

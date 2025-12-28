@@ -10,15 +10,66 @@ export interface MonthDefinition {
   days: number;
 }
 
+interface BaseCalendar {
+  name: string;
+  alias?: string[];
+  description?: string;
+  months: MonthDefinition[];
+}
+
 /**
  * Calendar - 历法类型
  * 定义一个历法的月份信息
  */
-export interface Calendar {
+export interface Calendar extends BaseCalendar {
   id: string;
-  name: string;
-  description?: string;
-  months?: MonthDefinition[];
+}
+
+/**
+ * 验证日历数据的有效性
+ */
+export function validateCalendar<D extends Pick<Calendar, 'months'>>(data: D): data is D {
+  // 验证：months 必须是非空数组
+  if (!Array.isArray(data.months) || data.months.length === 0) {
+    throw new Error('Invalid Calendar: months is required and must be a non-empty array');
+  }
+
+  // 验证：每个月的天数必须大于 0
+  for (let i = 0; i < data.months.length; i++) {
+    const month = data.months[i];
+    if (!month.name || typeof month.name !== 'string') {
+      throw new Error(`Invalid Calendar: month at index ${i} must have a name`);
+    }
+    if (typeof month.days !== 'number' || month.days <= 0) {
+      throw new Error(`Invalid Calendar: month "${month.name}" must have positive days`);
+    }
+    if (month.alias !== undefined && !Array.isArray(month.alias)) {
+      throw new Error(`Invalid Calendar: month "${month.name}" alias must be an array`);
+    }
+  }
+
+  return true
+}
+
+/**
+ * 验证从对象创建的日历数据
+ */
+export function validateCalendarFromObject(data: Record<string, any>): data is BaseCalendar {
+  if (!data.id || typeof data.id !== 'string') {
+    throw new Error('Invalid Calendar: id is required and must be a string');
+  }
+  if (!data.name || typeof data.name !== 'string') {
+    throw new Error('Invalid Calendar: name is required and must be a string');
+  }
+
+  // 使用通用的日历验证逻辑
+  validateCalendar({
+    name: data.name,
+    description: data.description,
+    months: data.months,
+  });
+
+  return true
 }
 
 /**
@@ -26,35 +77,19 @@ export interface Calendar {
  */
 export function createCalendar(data: {
   name: string;
+  alias?: string[];
   description?: string;
-  months?: MonthDefinition[];
+  months: MonthDefinition[];
 }): Calendar {
-  // 验证：如果提供了months，则至少要有一个月
-  if (data.months !== undefined && data.months.length === 0) {
-    throw new Error('Invalid Calendar: if months is provided, it must have at least one month');
-  }
-
-  // 验证：每个月的天数必须大于 0
-  if (data.months) {
-    for (let i = 0; i < data.months.length; i++) {
-      const month = data.months[i];
-      if (!month.name || typeof month.name !== 'string') {
-        throw new Error(`Invalid Calendar: month at index ${i} must have a name`);
-      }
-      if (typeof month.days !== 'number' || month.days <= 0) {
-        throw new Error(`Invalid Calendar: month "${month.name}" must have positive days`);
-      }
-      if (month.alias !== undefined && !Array.isArray(month.alias)) {
-        throw new Error(`Invalid Calendar: month "${month.name}" alias must be an array`);
-      }
-    }
-  }
+  // 验证日历数据
+  validateCalendar(data);
 
   return {
     id: ulid(),
     name: data.name,
+    alias: data.alias,
     description: data.description,
-    months: data.months?.map(m => ({
+    months: data.months.map(m => ({
       name: m.name,
       alias: m.alias,
       days: m.days,
@@ -66,76 +101,18 @@ export function createCalendar(data: {
  * 从对象创建 Calendar 数据
  */
 export function fromCalendar(data: Record<string, any>): Calendar {
-  if (!data.id || typeof data.id !== 'string') {
-    throw new Error('Invalid Calendar: id is required and must be a string');
-  }
-  if (!data.name || typeof data.name !== 'string') {
-    throw new Error('Invalid Calendar: name is required and must be a string');
-  }
-  if (data.months !== undefined && (!Array.isArray(data.months) || data.months.length === 0)) {
-    throw new Error('Invalid Calendar: if months is provided, it must be a non-empty array');
-  }
-
-  // 验证每个月份
-  if (data.months) {
-    for (let i = 0; i < data.months.length; i++) {
-      const month = data.months[i];
-      if (!month.name || typeof month.name !== 'string') {
-        throw new Error(`Invalid Calendar: month at index ${i} must have a name`);
-      }
-      if (typeof month.days !== 'number' || month.days <= 0) {
-        throw new Error(`Invalid Calendar: month "${month.name}" must have positive days`);
-      }
-      if (month.alias !== undefined && !Array.isArray(month.alias)) {
-        throw new Error(`Invalid Calendar: month "${month.name}" alias must be an array`);
-      }
-    }
-  }
+  // 验证日历数据
+  validateCalendarFromObject(data);
 
   return {
     id: data.id,
     name: data.name,
+    alias: data.alias,
     description: data.description,
-    months: data.months?.map((m: any) => ({
+    months: data.months.map((m: any) => ({
       name: m.name,
       alias: m.alias,
       days: m.days,
     })),
   };
-}
-
-/**
- * 获取历法中一年的总天数
- */
-export function getTotalDaysInYear(calendar: Calendar): number {
-  if (!calendar.months) return 0;
-  return calendar.months.reduce((total, month) => total + month.days, 0);
-}
-
-/**
- * 获取历法中的月份数量
- */
-export function getMonthsPerYear(calendar: Calendar): number {
-  return calendar.months?.length ?? 0;
-}
-
-/**
- * 根据月份索引获取月份信息（索引从0开始）
- */
-export function getMonthByIndex(calendar: Calendar, index: number): MonthDefinition | undefined {
-  if (!calendar.months || index < 0 || index >= calendar.months.length) {
-    return undefined;
-  }
-  return calendar.months[index];
-}
-
-/**
- * 根据月份名称或别名查找月份索引（返回第一个匹配的）
- */
-export function findMonthIndex(calendar: Calendar, nameOrAlias: string): number {
-  if (!calendar.months) return -1;
-  return calendar.months.findIndex(month =>
-    month.name === nameOrAlias ||
-    (month.alias && month.alias.includes(nameOrAlias))
-  );
 }

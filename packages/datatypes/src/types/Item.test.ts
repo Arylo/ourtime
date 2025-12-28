@@ -19,7 +19,7 @@ describe('Item', () => {
     });
 
     it('应该创建带有createdAt的Item对象', () => {
-      const createdAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const createdAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const item = createItem({
         name: '测试物品',
         description: '这是一个测试物品',
@@ -30,7 +30,7 @@ describe('Item', () => {
     });
 
     it('应该创建带有endAt的Item对象', () => {
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const item = createItem({
         name: '测试物品',
         description: '这是一个测试物品',
@@ -43,7 +43,7 @@ describe('Item', () => {
 
   describe('fromItem', () => {
     it('应该从对象创建Item对象', () => {
-      const createdAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const createdAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const itemData = {
         id: 'item_123',
         name: '测试物品',
@@ -64,7 +64,7 @@ describe('Item', () => {
       const itemData = {
         name: '测试物品',
         description: '这是一个测试物品',
-        createdAt: createStoryDate({ timelineId: 't1',  rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
+        createdAt: createStoryDate({   rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
       };
 
       expect(() => fromItem(itemData)).toThrow('Invalid Item: id is required and must be a string');
@@ -74,7 +74,7 @@ describe('Item', () => {
       const itemData = {
         id: 'item_123',
         description: '这是一个测试物品',
-        createdAt: createStoryDate({ timelineId: 't1',  rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
+        createdAt: createStoryDate({   rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
       };
 
       expect(() => fromItem(itemData)).toThrow('Invalid Item: name is required and must be a string');
@@ -84,7 +84,7 @@ describe('Item', () => {
       const itemData = {
         id: 'item_123',
         name: '测试物品',
-        createdAt: createStoryDate({ timelineId: 't1',  rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
+        createdAt: createStoryDate({   rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
       };
 
       const item = fromItem(itemData);
@@ -109,7 +109,7 @@ describe('Item', () => {
         id: 'item_123',
         name: '测试物品',
         description: '这是一个测试物品',
-        createdAt: createStoryDate({ timelineId: 't1',  rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
+        createdAt: createStoryDate({   rangeStart: 1, rangeEnd: 1, calendarId: 'test_calendar' }),
       };
 
       expect(item.id).toBe('item_123');

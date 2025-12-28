@@ -10,7 +10,7 @@ export function getStory (id: string): ReturnType<typeof loadStory> {
   if (!storyIds.includes(id)) {
     throw new Error('change storage fail')
   }
-  return loadStory(storage.getJSONObject(`story-${id}`))
+  return loadStory(storage.getJSONObject(`story-${id}`) as any)
 }
 
 export function saveStory (id: string, value: Story) {

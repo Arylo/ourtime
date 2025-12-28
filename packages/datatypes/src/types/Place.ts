@@ -8,6 +8,7 @@ import type { World } from './World';
 export interface Place {
   id: string;
   name: string;
+  description?: string;
   locatedId?: Place['id'];
   startAt?: StoryDate;
   endAt?: StoryDate;
@@ -20,6 +21,7 @@ export interface Place {
  */
 export function createPlace(data: {
   name: string;
+  description?: string;
   locatedId?: Place['id'];
   startAt?: StoryDate;
   endAt?: StoryDate;
@@ -28,6 +30,7 @@ export function createPlace(data: {
   return {
     id: ulid(),
     name: data.name,
+    description: data.description,
     locatedId: data.locatedId,
     startAt: data.startAt,
     endAt: data.endAt,
@@ -52,6 +55,7 @@ export function fromPlace(data: Record<string, any>): Place {
   return {
     id: data.id,
     name: data.name,
+    description: data.description,
     locatedId: data.locatedId,
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,

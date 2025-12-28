@@ -33,6 +33,7 @@ export function createOrganizeWho(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): OrganizeWho {
+  validateOrganizeWho(data);
   return {
     id: ulid(),
     organizeId: data.organizeId,
@@ -50,15 +51,7 @@ export function fromOrganizeWho(data: Record<string, any>): OrganizeWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid OrganizeWho: id is required and must be a string');
   }
-  if (!data.organizeId || typeof data.organizeId !== 'string') {
-    throw new Error('Invalid OrganizeWho: organizeId is required and must be a string');
-  }
-  if (!data.whoId || typeof data.whoId !== 'string') {
-    throw new Error('Invalid OrganizeWho: whoId is required and must be a string');
-  }
-  if (!data.role || !Object.values(OrganizeWhoRole).includes(data.role as OrganizeWhoRole)) {
-    throw new Error('Invalid OrganizeWho: role is required and must be a valid OrganizeWhoRole');
-  }
+  validateOrganizeWho(data);
 
   return {
     id: data.id,
@@ -68,4 +61,17 @@ export function fromOrganizeWho(data: Record<string, any>): OrganizeWho {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateOrganizeWho(data: Record<string, any>) {
+  if (!data.organizeId || typeof data.organizeId !== 'string') {
+    throw new Error('Invalid OrganizeWho: organizeId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid OrganizeWho: whoId is required and must be a string');
+  }
+  if (!data.role || !Object.values(OrganizeWhoRole).includes(data.role as OrganizeWhoRole)) {
+    throw new Error('Invalid OrganizeWho: role is required and must be a valid OrganizeWhoRole');
+  }
+  return true;
 }

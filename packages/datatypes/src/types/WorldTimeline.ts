@@ -18,6 +18,7 @@ export function createWorldTimeline(data: {
   worldId: World['id'];
   timelineId: Timeline['id'];
 }): WorldTimeline {
+  validateWorldTimeline(data);
   return {
     id: ulid(),
     worldId: data.worldId,
@@ -32,16 +33,21 @@ export function fromWorldTimeline(data: Record<string, any>): WorldTimeline {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid WorldTimeline: id is required and must be a string');
   }
-  if (!data.worldId || typeof data.worldId !== 'string') {
-    throw new Error('Invalid WorldTimeline: worldId is required and must be a string');
-  }
-  if (!data.timelineId || typeof data.timelineId !== 'string') {
-    throw new Error('Invalid WorldTimeline: timelineId is required and must be a string');
-  }
+  validateWorldTimeline(data);
 
   return {
     id: data.id,
     worldId: data.worldId,
     timelineId: data.timelineId,
   };
+}
+
+function validateWorldTimeline(data: Record<string, any>) {
+  if (!data.worldId || typeof data.worldId !== 'string') {
+    throw new Error('Invalid WorldTimeline: worldId is required and must be a string');
+  }
+  if (!data.timelineId || typeof data.timelineId !== 'string') {
+    throw new Error('Invalid WorldTimeline: timelineId is required and must be a string');
+  }
+  return true;
 }

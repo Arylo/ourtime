@@ -18,6 +18,7 @@ export function createWorldPlace(data: {
   worldId: World['id'];
   placeId: Place['id'];
 }): WorldPlace {
+  validateWorldPlace(data);
   return {
     id: ulid(),
     worldId: data.worldId,
@@ -32,16 +33,21 @@ export function fromWorldPlace(data: Record<string, any>): WorldPlace {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid WorldPlace: id is required and must be a string');
   }
-  if (!data.worldId || typeof data.worldId !== 'string') {
-    throw new Error('Invalid WorldPlace: worldId is required and must be a string');
-  }
-  if (!data.placeId || typeof data.placeId !== 'string') {
-    throw new Error('Invalid WorldPlace: placeId is required and must be a string');
-  }
+  validateWorldPlace(data);
 
   return {
     id: data.id,
     worldId: data.worldId,
     placeId: data.placeId,
   };
+}
+
+function validateWorldPlace(data: Record<string, any>) {
+  if (!data.worldId || typeof data.worldId !== 'string') {
+    throw new Error('Invalid WorldPlace: worldId is required and must be a string');
+  }
+  if (!data.placeId || typeof data.placeId !== 'string') {
+    throw new Error('Invalid WorldPlace: placeId is required and must be a string');
+  }
+  return true;
 }

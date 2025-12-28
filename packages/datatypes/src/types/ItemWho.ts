@@ -33,6 +33,7 @@ export function createItemWho(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): ItemWho {
+  validateItemWho(data);
   return {
     id: ulid(),
     itemId: data.itemId,
@@ -50,15 +51,7 @@ export function fromItemWho(data: Record<string, any>): ItemWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemWho: id is required and must be a string');
   }
-  if (!data.itemId || typeof data.itemId !== 'string') {
-    throw new Error('Invalid ItemWho: itemId is required and must be a string');
-  }
-  if (!data.whoId || typeof data.whoId !== 'string') {
-    throw new Error('Invalid ItemWho: whoId is required and must be a string');
-  }
-  if (!data.role || !Object.values(ItemWhoRole).includes(data.role as ItemWhoRole)) {
-    throw new Error('Invalid ItemWho: role is required and must be a valid ItemWhoRole');
-  }
+  validateItemWho(data);
 
   return {
     id: data.id,
@@ -68,4 +61,17 @@ export function fromItemWho(data: Record<string, any>): ItemWho {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateItemWho(data: Record<string, any>) {
+  if (!data.itemId || typeof data.itemId !== 'string') {
+    throw new Error('Invalid ItemWho: itemId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid ItemWho: whoId is required and must be a string');
+  }
+  if (!data.role || !Object.values(ItemWhoRole).includes(data.role as ItemWhoRole)) {
+    throw new Error('Invalid ItemWho: role is required and must be a valid ItemWhoRole');
+  }
+  return true;
 }

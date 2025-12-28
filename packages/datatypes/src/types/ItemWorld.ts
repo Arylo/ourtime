@@ -33,6 +33,7 @@ export function createItemWorld(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): ItemWorld {
+  validateItemWorld(data);
   return {
     id: ulid(),
     itemId: data.itemId,
@@ -50,15 +51,7 @@ export function fromItemWorld(data: Record<string, any>): ItemWorld {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemWorld: id is required and must be a string');
   }
-  if (!data.itemId || typeof data.itemId !== 'string') {
-    throw new Error('Invalid ItemWorld: itemId is required and must be a string');
-  }
-  if (!data.worldId || typeof data.worldId !== 'string') {
-    throw new Error('Invalid ItemWorld: worldId is required and must be a string');
-  }
-  if (!data.role || !Object.values(ItemWorldRole).includes(data.role as ItemWorldRole)) {
-    throw new Error('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
-  }
+  validateItemWorld(data);
 
   return {
     id: data.id,
@@ -68,4 +61,17 @@ export function fromItemWorld(data: Record<string, any>): ItemWorld {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateItemWorld(data: Record<string, any>) {
+  if (!data.itemId || typeof data.itemId !== 'string') {
+    throw new Error('Invalid ItemWorld: itemId is required and must be a string');
+  }
+  if (!data.worldId || typeof data.worldId !== 'string') {
+    throw new Error('Invalid ItemWorld: worldId is required and must be a string');
+  }
+  if (!data.role || !Object.values(ItemWorldRole).includes(data.role as ItemWorldRole)) {
+    throw new Error('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
+  }
+  return true;
 }

@@ -34,6 +34,7 @@ export function createHistoryOrganize(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): HistoryOrganize {
+  validateHistoryOrganize(data);
   return {
     id: ulid(),
     historyId: data.historyId,
@@ -51,15 +52,7 @@ export function fromHistoryOrganize(data: Record<string, any>): HistoryOrganize 
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryOrganize: id is required and must be a string');
   }
-  if (!data.historyId || typeof data.historyId !== 'string') {
-    throw new Error('Invalid HistoryOrganize: historyId is required and must be a string');
-  }
-  if (!data.organizeId || typeof data.organizeId !== 'string') {
-    throw new Error('Invalid HistoryOrganize: organizeId is required and must be a string');
-  }
-  if (!data.role || !Object.values(HistoryOrganizeRole).includes(data.role as HistoryOrganizeRole)) {
-    throw new Error('Invalid HistoryOrganize: role is required and must be a valid HistoryOrganizeRole');
-  }
+  validateHistoryOrganize(data);
 
   return {
     id: data.id,
@@ -69,4 +62,17 @@ export function fromHistoryOrganize(data: Record<string, any>): HistoryOrganize 
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateHistoryOrganize(data: Record<string, any>) {
+  if (!data.historyId || typeof data.historyId !== 'string') {
+    throw new Error('Invalid HistoryOrganize: historyId is required and must be a string');
+  }
+  if (!data.organizeId || typeof data.organizeId !== 'string') {
+    throw new Error('Invalid HistoryOrganize: organizeId is required and must be a string');
+  }
+  if (!data.role || !Object.values(HistoryOrganizeRole).includes(data.role as HistoryOrganizeRole)) {
+    throw new Error('Invalid HistoryOrganize: role is required and must be a valid HistoryOrganizeRole');
+  }
+  return true;
 }

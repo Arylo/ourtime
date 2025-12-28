@@ -5,14 +5,10 @@ import { createStoryDate } from './StoryDate';
 describe('Who', () => {
   describe('createWho', () => {
     it('应该创建一个带有ULID的Who对象', () => {
-      const bornAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const diedAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const who = createWho({
         name: '测试人物',
         description: '这是一个测试人物',
         alias: ['别名1', '别名2'],
-        bornAt,
-        diedAt,
         parents: ['who_parent', 'world_parent'],
       });
 
@@ -22,8 +18,6 @@ describe('Who', () => {
       expect(who.name).toBe('测试人物');
       expect(who.description).toBe('这是一个测试人物');
       expect(who.alias).toEqual(['别名1', '别名2']);
-      expect(who.bornAt).toEqual(bornAt);
-      expect(who.diedAt).toEqual(diedAt);
       expect(who.parents).toEqual(['who_parent', 'world_parent']);
       expect(who.appeared).toBe(false);
     });

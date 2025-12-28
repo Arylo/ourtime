@@ -28,6 +28,7 @@ export function createHistoryTimeline(data: {
   timelineId: Timeline['id'];
   role: HistoryTimelineRole;
 }): HistoryTimeline {
+  validateHistoryTimeline(data);
   return {
     id: ulid(),
     historyId: data.historyId,
@@ -43,6 +44,17 @@ export function fromHistoryTimeline(data: Record<string, any>): HistoryTimeline 
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryTimeline: id is required and must be a string');
   }
+  validateHistoryTimeline(data);
+
+  return {
+    id: data.id,
+    historyId: data.historyId,
+    timelineId: data.timelineId,
+    role: data.role as HistoryTimelineRole,
+  };
+}
+
+function validateHistoryTimeline(data: Record<string, any>) {
   if (!data.historyId || typeof data.historyId !== 'string') {
     throw new Error('Invalid HistoryTimeline: historyId is required and must be a string');
   }
@@ -52,11 +64,5 @@ export function fromHistoryTimeline(data: Record<string, any>): HistoryTimeline 
   if (!data.role || !Object.values(HistoryTimelineRole).includes(data.role as HistoryTimelineRole)) {
     throw new Error('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
   }
-
-  return {
-    id: data.id,
-    historyId: data.historyId,
-    timelineId: data.timelineId,
-    role: data.role as HistoryTimelineRole,
-  };
+  return true;
 }

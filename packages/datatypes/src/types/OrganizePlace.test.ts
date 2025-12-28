@@ -5,8 +5,8 @@ import { createStoryDate } from './StoryDate';
 describe('OrganizePlace', () => {
   describe('createOrganizePlace', () => {
     it('应该创建一个带有ULID的OrganizePlace对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organizePlace = createOrganizePlace({
         organizeId: 'org_123',
         placeId: 'place_123',
@@ -36,11 +36,23 @@ describe('OrganizePlace', () => {
       expect(organizePlace.startAt).toBeUndefined();
       expect(organizePlace.endAt).toBeUndefined();
     });
+
+    it('当缺少organizeId时应该抛出错误', () => {
+      expect(() => createOrganizePlace({
+        placeId: 'place_123',
+      } as any)).toThrow('Invalid OrganizePlace: organizeId is required and must be a string');
+    });
+
+    it('当缺少placeId时应该抛出错误', () => {
+      expect(() => createOrganizePlace({
+        organizeId: 'org_123',
+      } as any)).toThrow('Invalid OrganizePlace: placeId is required and must be a string');
+    });
   });
 
   describe('fromOrganizePlace', () => {
     it('应该从对象创建OrganizePlace对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const organizePlaceData = {
         id: 'op_123',
         organizeId: 'org_123',

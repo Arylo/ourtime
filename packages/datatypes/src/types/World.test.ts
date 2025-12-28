@@ -5,8 +5,8 @@ import { createStoryDate } from './StoryDate';
 describe('World', () => {
   describe('createWorld', () => {
     it('应该创建一个带有ULID的World对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const world = createWorld({
         name: '测试世界',
         startAt,
@@ -29,8 +29,8 @@ describe('World', () => {
       expect(world).toBeDefined();
       expect(world.id).toBeDefined();
       expect(world.name).toBe('测试世界');
-      expect(world.startAt).toBeUndefined();
-      expect(world.endAt).toBeUndefined();
+      expect(world.startAt).toEqual(createStoryDate({ isUnknown: true }));
+      expect(world.endAt).toEqual(createStoryDate({ isUnknown: true }));
     });
 
     it('应该创建带有parents的World对象', () => {
@@ -44,12 +44,35 @@ describe('World', () => {
       expect(world.name).toBe('子世界');
       expect(world.parents).toEqual(['parent_world_id']);
     });
+
+    it('应该创建带有description的World对象', () => {
+      const world = createWorld({
+        name: '测试世界',
+        description: '这是一个测试世界的描述',
+      });
+
+      expect(world).toBeDefined();
+      expect(world.id).toBeDefined();
+      expect(world.name).toBe('测试世界');
+      expect(world.description).toBe('这是一个测试世界的描述');
+    });
+
+    it('应该创建没有description的World对象', () => {
+      const world = createWorld({
+        name: '测试世界',
+      });
+
+      expect(world).toBeDefined();
+      expect(world.id).toBeDefined();
+      expect(world.name).toBe('测试世界');
+      expect(world.description).toBeUndefined();
+    });
   });
 
   describe('fromWorld', () => {
     it('应该从对象创建World对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const worldData = {
         id: 'world_123',
         name: '测试世界',
@@ -72,13 +95,44 @@ describe('World', () => {
         name: '测试世界',
       };
 
+      expect(() => fromWorld(worldData)).toThrow('Invalid World: startAt is required');
+    });
+
+    it('应该从带有description的对象创建World对象', () => {
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const worldData = {
+        id: 'world_123',
+        name: '测试世界',
+        description: '这是一个测试世界的详细描述',
+        startAt,
+        endAt,
+      };
+
       const world = fromWorld(worldData);
 
       expect(world).toBeDefined();
       expect(world.id).toBe('world_123');
       expect(world.name).toBe('测试世界');
-      expect(world.startAt).toBeUndefined();
-      expect(world.endAt).toBeUndefined();
+      expect(world.description).toBe('这是一个测试世界的详细描述');
+    });
+
+    it('应该从没有description的对象创建World对象', () => {
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const worldData = {
+        id: 'world_123',
+        name: '测试世界',
+        startAt,
+        endAt,
+      };
+
+      const world = fromWorld(worldData);
+
+      expect(world).toBeDefined();
+      expect(world.id).toBe('world_123');
+      expect(world.name).toBe('测试世界');
+      expect(world.description).toBeUndefined();
     });
 
     it('当缺少name时应该抛出错误', () => {
@@ -116,10 +170,14 @@ describe('World', () => {
     });
 
     it('应该从包含parents的对象创建World对象', () => {
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const worldData = {
         id: 'child_world_123',
         name: '子世界',
         parents: ['parent_world_id'],
+        startAt,
+        endAt,
       };
 
       const world = fromWorld(worldData);
@@ -131,9 +189,13 @@ describe('World', () => {
     });
 
     it('应该从没有parents的对象创建World对象', () => {
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const worldData = {
         id: 'world_123',
         name: '主世界',
+        startAt,
+        endAt,
       };
 
       const world = fromWorld(worldData);
@@ -147,8 +209,8 @@ describe('World', () => {
 
   describe('World接口', () => {
     it('应该符合World接口定义', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const world: World = {
         id: 'world_123',
         name: '测试世界',
@@ -166,12 +228,16 @@ describe('World', () => {
       const worldWithoutParents: World = {
         id: 'world_123',
         name: '主世界',
+        startAt: createStoryDate({ isUnknown: true }),
+        endAt: createStoryDate({ isUnknown: true }),
       };
 
       const worldWithParents: World = {
         id: 'world_456',
         name: '子世界',
         parents: ['world_123'],
+        startAt: createStoryDate({ isUnknown: true }),
+        endAt: createStoryDate({ isUnknown: true }),
       };
 
       expect(worldWithoutParents.parents).toBeUndefined();

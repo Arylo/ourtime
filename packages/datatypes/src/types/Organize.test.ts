@@ -5,8 +5,8 @@ import { createStoryDate } from './StoryDate';
 describe('Organize', () => {
   describe('createOrganize', () => {
     it('应该创建一个带有ULID的Organize对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organize = createOrganize({
         name: '测试组织',
         description: '这是一个测试组织',
@@ -40,8 +40,8 @@ describe('Organize', () => {
 
   describe('fromOrganize', () => {
     it('应该从对象创建Organize对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organizeData = {
         id: 'org_123',
         name: '测试组织',
@@ -138,8 +138,8 @@ describe('Organize', () => {
 
   describe('Organize接口', () => {
     it('应该符合Organize接口定义', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organize: Organize = {
         id: 'org_123',
         name: '测试组织',
@@ -162,8 +162,8 @@ describe('Organize', () => {
         description: '这是一个测试组织',
       };
 
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organizeWithOptional: Organize = {
         id: 'org_456',
         name: '测试组织',

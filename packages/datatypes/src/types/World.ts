@@ -1,5 +1,5 @@
 import { ulid } from 'ulid';
-import { StoryDate, fromStoryDate } from './StoryDate';
+import { StoryDate, createStoryDate, fromStoryDate } from './StoryDate';
 
 /**
  * World - 表示一个独立的世界观
@@ -7,8 +7,9 @@ import { StoryDate, fromStoryDate } from './StoryDate';
 export interface World {
   name: string;
   id: string;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  description?: string;
+  startAt: StoryDate;
+  endAt: StoryDate;
   parents?: World['id'][];
 }
 
@@ -17,6 +18,7 @@ export interface World {
  */
 export function createWorld(data: {
   name: string;
+  description?: string;
   startAt?: StoryDate;
   endAt?: StoryDate;
   parents?: World['id'][];
@@ -24,8 +26,9 @@ export function createWorld(data: {
   return {
     id: ulid(),
     name: data.name,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    description: data.description,
+    startAt: data.startAt ?? createStoryDate({ isUnknown: true }),
+    endAt: data.endAt ?? createStoryDate({ isUnknown: true }),
     parents: data.parents,
   };
 }
@@ -40,11 +43,18 @@ export function fromWorld(data: Record<string, any>): World {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid World: id is required and must be a string');
   }
+  if (!data.startAt) {
+    throw new Error('Invalid World: startAt is required');
+  }
+  if (!data.endAt) {
+    throw new Error('Invalid World: endAt is required');
+  }
   return {
     name: data.name,
     id: data.id,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    description: data.description,
+    startAt: fromStoryDate(data.startAt),
+    endAt: fromStoryDate(data.endAt),
     parents: data.parents,
   };
 }

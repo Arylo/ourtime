@@ -5,15 +5,12 @@ describe('StoryDate', () => {
   describe('createStoryDate', () => {
     it('应该创建一个带有日历信息的 StoryDate 对象', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_123',
         rangeStart: 1000,
         rangeEnd: 1000,
         calendarId: 'calendar_123',
       });
 
       expect(storyDate).toBeDefined();
-      expect(storyDate.id).toBeDefined();
-      expect(storyDate.timelineId).toBe('timeline_123');
       if ('rangeStart' in storyDate) {
         expect(storyDate.rangeStart).toBe(1000);
         expect(storyDate.rangeEnd).toBe(1000);
@@ -24,14 +21,12 @@ describe('StoryDate', () => {
 
     it('应该创建一个带有近似值的 StoryDate 对象', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_123',
         rangeStart: 900,
         rangeEnd: 1100,
         calendarId: 'gregorian_calendar',
         approx: true,
       });
 
-      expect(storyDate.timelineId).toBe('timeline_123');
       if ('rangeStart' in storyDate) {
         expect(storyDate.rangeStart).toBe(900);
         expect(storyDate.rangeEnd).toBe(1100);
@@ -42,12 +37,9 @@ describe('StoryDate', () => {
 
     it('应该创建一个未知日期的 StoryDate 对象', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_123',
         isUnknown: true,
       });
 
-      expect(storyDate.timelineId).toBe('timeline_123');
-      expect(storyDate.id).toBeDefined();
       if ('isUnknown' in storyDate) {
         expect(storyDate.isUnknown).toBe(true);
       }
@@ -57,16 +49,12 @@ describe('StoryDate', () => {
   describe('fromStoryDate', () => {
     it('应该从对象创建带有日历信息的 StoryDate', () => {
       const data = {
-        id: 'test-id',
-        timelineId: 'timeline_123',
         rangeStart: 1000,
         rangeEnd: 1200,
         calendarId: 'calendar_he',
         approx: false,
       };
       const storyDate = fromStoryDate(data);
-      expect(storyDate.id).toBe('test-id');
-      expect(storyDate.timelineId).toBe('timeline_123');
       if ('rangeStart' in storyDate) {
         expect(storyDate.rangeStart).toBe(1000);
         expect(storyDate.rangeEnd).toBe(1200);
@@ -77,34 +65,29 @@ describe('StoryDate', () => {
 
     it('应该从对象创建未知日期的 StoryDate', () => {
       const data = {
-        id: 'test-id-2',
-        timelineId: 'timeline_456',
         isUnknown: true,
       };
       const storyDate = fromStoryDate(data);
-      expect(storyDate.id).toBe('test-id-2');
-      expect(storyDate.timelineId).toBe('timeline_456');
       if ('isUnknown' in storyDate) {
         expect(storyDate.isUnknown).toBe(true);
       }
     });
 
     it('缺少必要字段时应该抛出错误', () => {
-      expect(() => fromStoryDate({ id: '1' })).toThrow();
+      expect(() => fromStoryDate({})).toThrow();
       expect(() => fromStoryDate({ rangeStart: 1, rangeEnd: 2 })).toThrow();
-      expect(() => fromStoryDate({ id: '1', rangeStart: 1, rangeEnd: 2 })).toThrow('Invalid StoryDate: timelineId is required and must be a string');
-      expect(() => fromStoryDate({ id: '1', timelineId: 'timeline_123', rangeStart: 1, rangeEnd: 2 })).toThrow('Invalid StoryDate: calendarId is required and must be a string');
+      expect(() => fromStoryDate({ rangeStart: 1, rangeEnd: 2 })).toThrow('Invalid StoryDate: calendarId is required and must be a string');
     });
 
     it('当不是未知日期时缺少 rangeStart/rangeEnd 应该抛出错误', () => {
-      expect(() => fromStoryDate({ id: '1', timelineId: 'timeline_123' })).toThrow('Invalid StoryDate: rangeStart and rangeEnd are required and must be numbers');
+      expect(() => fromStoryDate({})).toThrow('Invalid StoryDate: rangeStart and rangeEnd are required and must be numbers');
     });
   });
 
   describe('边界测试', () => {
     it('应该处理 rangeStart 和 rangeEnd 的极端值', () => {
       const extremeStoryDate = createStoryDate({
-        timelineId: 'timeline_extreme',
+
         rangeStart: Number.MIN_SAFE_INTEGER,
         rangeEnd: Number.MAX_SAFE_INTEGER,
         calendarId: 'extreme_calendar',
@@ -117,7 +100,7 @@ describe('StoryDate', () => {
 
     it('应该处理负数范围', () => {
       const negativeStoryDate = createStoryDate({
-        timelineId: 'timeline_negative',
+
         rangeStart: -100,
         rangeEnd: -50,
         calendarId: 'negative_calendar',
@@ -132,35 +115,47 @@ describe('StoryDate', () => {
   describe('ApproxType 测试', () => {
     it('应该正确处理 year 类型的 approx', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_year',
+
         calendarId: 'calendar_year',
+        rangeStart: 1000,
+        rangeEnd: 1000,
         approx: 'year',
       });
 
       expect(storyDate.approx).toBe('year');
       expect(storyDate.calendarId).toBe('calendar_year');
+      expect(storyDate.rangeStart).toBe(1000);
+      expect(storyDate.rangeEnd).toBe(1000);
     });
 
     it('应该正确处理 month 类型的 approx', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_month',
+
         calendarId: 'calendar_month',
+        rangeStart: 2000,
+        rangeEnd: 2000,
         approx: 'month',
       });
 
       expect(storyDate.approx).toBe('month');
       expect(storyDate.calendarId).toBe('calendar_month');
+      expect(storyDate.rangeStart).toBe(2000);
+      expect(storyDate.rangeEnd).toBe(2000);
     });
 
     it('应该正确处理 day 类型的 approx', () => {
       const storyDate = createStoryDate({
-        timelineId: 'timeline_day',
+
         calendarId: 'calendar_day',
+        rangeStart: 3000,
+        rangeEnd: 3000,
         approx: 'day',
       });
 
       expect(storyDate.approx).toBe('day');
       expect(storyDate.calendarId).toBe('calendar_day');
+      expect(storyDate.rangeStart).toBe(3000);
+      expect(storyDate.rangeEnd).toBe(3000);
     });
   });
 });

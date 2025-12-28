@@ -20,17 +20,26 @@ describe('WorldWho', () => {
     });
 
     it('应该创建带有时间范围的WorldWho对象', () => {
-      const startAt = createStoryDate({ timelineId: 't1',  rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ timelineId: 't1',  rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const worldWho = createWorldWho({
         worldId: 'world_123',
         whoId: 'who_123',
+        role: WorldWhoRole.OWNER,
         startAt,
         endAt,
       });
 
       expect(worldWho.startAt).toEqual(startAt);
       expect(worldWho.endAt).toEqual(endAt);
+    });
+
+    it('当role无效时应该抛出错误', () => {
+      expect(() => createWorldWho({
+        worldId: 'world_123',
+        whoId: 'who_123',
+        role: 'invalid_role' as any,
+      })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
     });
   });
 
@@ -53,8 +62,18 @@ describe('WorldWho', () => {
     });
 
     it('当缺少必要字段时应该抛出错误', () => {
-      expect(() => fromWorldWho({ id: '1' })).toThrow('Invalid WorldWho: worldId is required');
-      expect(() => fromWorldWho({ id: '1', worldId: 'w1' })).toThrow('Invalid WorldWho: whoId is required');
+      expect(() => fromWorldWho({ id: '1' })).toThrow('Invalid WorldWho: worldId is required and must be a string');
+      expect(() => fromWorldWho({ id: '1', worldId: 'w1' })).toThrow('Invalid WorldWho: whoId is required and must be a string');
+      expect(() => fromWorldWho({ id: '1', worldId: 'w1', whoId: 'h1' })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
+    });
+
+    it('当role无效时应该抛出错误', () => {
+      expect(() => fromWorldWho({
+        id: '1',
+        worldId: 'w1',
+        whoId: 'h1',
+        role: 'invalid_role'
+      })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
     });
   });
 });

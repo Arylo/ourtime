@@ -23,6 +23,7 @@ export function createOrganizePlace(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
 }): OrganizePlace {
+  validateOrganizePlace(data);
   return {
     id: ulid(),
     organizeId: data.organizeId,
@@ -39,12 +40,7 @@ export function fromOrganizePlace(data: Record<string, any>): OrganizePlace {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid OrganizePlace: id is required and must be a string');
   }
-  if (!data.organizeId || typeof data.organizeId !== 'string') {
-    throw new Error('Invalid OrganizePlace: organizeId is required and must be a string');
-  }
-  if (!data.placeId || typeof data.placeId !== 'string') {
-    throw new Error('Invalid OrganizePlace: placeId is required and must be a string');
-  }
+  validateOrganizePlace(data);
 
   return {
     id: data.id,
@@ -53,4 +49,14 @@ export function fromOrganizePlace(data: Record<string, any>): OrganizePlace {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
   };
+}
+
+function validateOrganizePlace(data: Record<string, any>) {
+  if (!data.organizeId || typeof data.organizeId !== 'string') {
+    throw new Error('Invalid OrganizePlace: organizeId is required and must be a string');
+  }
+  if (!data.placeId || typeof data.placeId !== 'string') {
+    throw new Error('Invalid OrganizePlace: placeId is required and must be a string');
+  }
+  return true;
 }

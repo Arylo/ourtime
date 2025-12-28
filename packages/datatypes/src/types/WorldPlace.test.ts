@@ -15,6 +15,18 @@ describe('WorldPlace', () => {
       expect(worldPlace.worldId).toBe('world_123');
       expect(worldPlace.placeId).toBe('place_123');
     });
+
+    it('当缺少worldId时应该抛出错误', () => {
+      expect(() => createWorldPlace({
+        placeId: 'place_123',
+      } as any)).toThrow('Invalid WorldPlace: worldId is required and must be a string');
+    });
+
+    it('当缺少placeId时应该抛出错误', () => {
+      expect(() => createWorldPlace({
+        worldId: 'world_123',
+      } as any)).toThrow('Invalid WorldPlace: placeId is required and must be a string');
+    });
   });
 
   describe('fromWorldPlace', () => {
