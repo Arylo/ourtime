@@ -1,5 +1,6 @@
 ---
 name: Project Definition
+applyTo: "packages/datatypes/src/types/**/*.ts, packages/datatypes/src/instances/**/*Instance.ts"
 ---
 
 # 项目设定

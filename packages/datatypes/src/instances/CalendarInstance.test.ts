@@ -204,8 +204,10 @@ describe('CalendarInstance', () => {
     describe('year方法', () => {
       it('应该计算年份对应的天数', () => {
         // 一年有12*30=360天
-        expect(calendarInstance.year(1)).toBe(360);
-        expect(calendarInstance.year(2)).toBe(720);
+        // 第1年是元年，对应0天
+        // 第2年对应360天
+        expect(calendarInstance.year(1)).toBe(0);
+        expect(calendarInstance.year(2)).toBe(360);
         expect(calendarInstance.year(0)).toBe(0);
         expect(calendarInstance.year(-1)).toBe(-360);
       });
@@ -238,19 +240,19 @@ describe('CalendarInstance', () => {
     describe('date方法', () => {
       it('应该计算完整日期对应的天数', () => {
         // 第2年，第3个月，第15天
-        // 2年 = 2 * 360 = 720天
+        // 2年 = 1 * 360 = 360天（第2年对应360天）
         // 3月之前 = 2个月 * 30 = 60天
         // 15天 = 15天
-        // 总计 = 720 + 60 + 15 = 795天
-        expect(calendarInstance.toDateNumber(2, 3, 15)).toBe(795);
+        // 总计 = 360 + 60 + 15 = 435天
+        expect(calendarInstance.toDateNumber(2, 3, 15)).toBe(435);
       });
 
       it('应该处理只有年份的情况', () => {
-        expect(calendarInstance.toDateNumber(2)).toBe(720); // 只有年份
+        expect(calendarInstance.toDateNumber(2)).toBe(360); // 只有年份（第2年对应360天）
       });
 
       it('应该处理年份和月份的情况', () => {
-        expect(calendarInstance.toDateNumber(2, 3)).toBe(780); // 年份和月份
+        expect(calendarInstance.toDateNumber(2, 3)).toBe(420); // 年份和月份（360 + 60）
       });
 
       it('应该处理没有参数的情况', () => {
@@ -258,7 +260,7 @@ describe('CalendarInstance', () => {
       });
 
       it('应该处理负值', () => {
-        expect(calendarInstance.toDateNumber(-1, 1, 1)).toBe(-360 + 0 + 1); // -359天
+        expect(calendarInstance.toDateNumber(-1, 1, 1)).toBe(-360 + 0 + 1 - 1); // -360天
       });
 
       // 注意：date 方法在月份为 undefined 时会传入 0 给 month 方法
@@ -270,89 +272,93 @@ describe('CalendarInstance', () => {
 
     describe('fromDateNumber方法', () => {
       it('应该将天数转换为年、月、日', () => {
-        // 测试 795 天：第2年，第3个月，第15天
-        // 2年 = 2 * 360 = 720天
+        // 测试 435 天：第2年，第3个月，第15天
+        // 2年 = 1 * 360 = 360天
         // 3月之前 = 2个月 * 30 = 60天
         // 15天 = 15天
-        // 总计 = 720 + 60 + 15 = 795天
-        const result = calendarInstance.fromDateNumber(795);
+        // 总计 = 360 + 60 + 15 = 435天
+        const result = calendarInstance.fromDateNumber(435);
         expect(result.year).toBe(2);
         expect(result.month).toBe(3);
         expect(result.day).toBe(15);
       });
 
       it('应该处理正好一年的天数', () => {
-        // 360天 = 第1年，第1个月，第0天
+        // 360天 = 第2年，第1个月，第0天
         const result = calendarInstance.fromDateNumber(360);
-        expect(result.year).toBe(1);
+        expect(result.year).toBe(2);
         expect(result.month).toBe(1);
         expect(result.day).toBe(0);
       });
 
       it('应该处理正好一个月的天数', () => {
-        // 30天 = 第0年，第2个月，第0天
+        // 30天 = 第1年，第2个月，第0天
         const result = calendarInstance.fromDateNumber(30);
-        expect(result.year).toBe(0);
+        expect(result.year).toBe(1);
         expect(result.month).toBe(2);
         expect(result.day).toBe(0);
       });
 
       it('应该处理零天数', () => {
         const result = calendarInstance.fromDateNumber(0);
-        expect(result.year).toBe(0);
+        expect(result.year).toBe(1);
         expect(result.month).toBe(1); // 注意：当 remainingDays = 0 时，month 会是 1
         expect(result.day).toBe(0);
       });
 
       it('应该处理负天数', () => {
-        // -359天 = 第-1年，第1个月，第1天
-        // -1年 = -360天
-        // 剩余 1天，所以是第1个月，第1天
-        const result = calendarInstance.fromDateNumber(-359);
+        // -360天 = 第-1年，第1个月，第1天
+        // -359天 = 第-1年，第1个月，第2天
+        const result = calendarInstance.fromDateNumber(-360);
         expect(result.year).toBe(-1);
         expect(result.month).toBe(1);
         expect(result.day).toBe(1);
+
+        const result2 = calendarInstance.fromDateNumber(-359);
+        expect(result2.year).toBe(-1);
+        expect(result2.month).toBe(1);
+        expect(result2.day).toBe(2);
       });
 
       it('应该处理跨年边界的情况', () => {
-        // 359天 = 第0年，第12个月，第29天
+        // 359天 = 第1年，第12个月，第29天
         const result = calendarInstance.fromDateNumber(359);
-        expect(result.year).toBe(0);
+        expect(result.year).toBe(1);
         expect(result.month).toBe(12);
         expect(result.day).toBe(29);
       });
 
       it('应该处理跨月边界的情况', () => {
-        // 59天 = 第0年，第3个月，第-1天？等等，需要检查
+        // 59天 = 第1年，第3个月，第-1天？等等，需要检查
         // 实际上：
         // 0-29天：第1个月
         // 30-59天：第2个月
         // 60-89天：第3个月
         // 所以59天应该是第2个月，第29天
         const result = calendarInstance.fromDateNumber(59);
-        expect(result.year).toBe(0);
+        expect(result.year).toBe(1);
         expect(result.month).toBe(2);
         expect(result.day).toBe(29);
       });
 
-      it('toDateNumber 和 fromDateNumber 应该互为逆操作', () => {
-        // 测试一些随机值
-        const testCases = [
-          { year: 0, month: 1, day: 0 },
-          { year: 1, month: 1, day: 1 },
-          { year: 2, month: 3, day: 15 },
-          { year: 5, month: 12, day: 29 },
-          { year: -1, month: 1, day: 1 },
-        ];
-
-        for (const testCase of testCases) {
+      // 测试一些随机值
+      const testCases = [
+        { year: 1, month: 1, day: 1 },
+        { year: 2, month: 3, day: 15 },
+        { year: 5, month: 12, day: 29 },
+        { year: -1, month: 12, day: 30 },
+        { year: -1, month: 1, day: 1 },
+        { year: -5, month: 12, day: 29 },
+      ];
+      for (const testCase of testCases) {
+        it(`toDateNumber 和 fromDateNumber 应该互为逆操作 for year=${testCase.year}, month=${testCase.month}, day=${testCase.day}`, () => {
           const dateNumber = calendarInstance.toDateNumber(testCase.year, testCase.month, testCase.day);
           const result = calendarInstance.fromDateNumber(dateNumber);
           expect(result.year).toBe(testCase.year);
           expect(result.month).toBe(testCase.month);
           expect(result.day).toBe(testCase.day);
-        }
-      });
+        });
+      }
     });
   });
 });

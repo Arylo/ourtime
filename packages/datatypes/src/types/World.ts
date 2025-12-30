@@ -11,6 +11,10 @@ export interface World {
   startAt: StoryDate;
   endAt: StoryDate;
   parents?: World['id'][];
+  /** 是否已出场，默认 false */
+  appeared?: boolean;
+  /** 是否已离场，默认 false */
+  departed?: boolean;
 }
 
 /**
@@ -22,6 +26,8 @@ export function createWorld(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
   parents?: World['id'][];
+  appeared?: boolean;
+  departed?: boolean;
 }): World {
   return {
     id: ulid(),
@@ -30,6 +36,8 @@ export function createWorld(data: {
     startAt: data.startAt ?? createStoryDate({ isUnknown: true }),
     endAt: data.endAt ?? createStoryDate({ isUnknown: true }),
     parents: data.parents,
+    appeared: data.appeared ?? false,
+    departed: data.departed ?? false,
   };
 }
 
@@ -56,5 +64,7 @@ export function fromWorld(data: Record<string, any>): World {
     startAt: fromStoryDate(data.startAt),
     endAt: fromStoryDate(data.endAt),
     parents: data.parents,
+    appeared: !!data.appeared,
+    departed: !!data.departed,
   };
 }

@@ -17,6 +17,7 @@
   "author": "Aryle Yeung <arylo.open@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@toon-format/toon": "^2.1.0",
     "ts-pattern": "^5.9.0",
     "ulid": "^2.3.0"
   },

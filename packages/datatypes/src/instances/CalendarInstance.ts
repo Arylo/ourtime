@@ -67,8 +67,9 @@ export class CalendarInstance {
   }
 
   public year (year: number) {
+    if (year === 0) return 0;
     const oneYearDays = this.toObject().months?.reduce((sum, month) => sum + month.days, 0)
-    return year * (oneYearDays ?? 0);
+    return (year > 0 ? year - 1 : year) * (oneYearDays ?? 0);
   }
 
   public month (month: number) {
@@ -86,29 +87,69 @@ export class CalendarInstance {
   }
 
   public toDateNumber (year?: number, month?: number, day?: number) {
-    return this.year(year ?? 0) + this.month(month ?? 0) + this.day(day ?? 0);
+    console.log('toDateNumber:', year, month, day);
+    const [_year, _month, _day] = [year, month, day].map(v => v ?? 0);
+    return this.year(_year) + this.month(_month) + this.day(_day) + (_year >= 0 ? 0 : -1);
   }
 
   public fromDateNumber (dateNumber: number) {
-    let remainingDays = dateNumber;
+    if (typeof dateNumber === 'number') {
+      // 可以是{ year: 0, month: 0, day: 0 }
+      // 也可以是{ year: 1, month: 0, day: 0 }
+      // 也可以是{ year: 0, month: 1, day: 0 }
+      // 也可以是{ year: 1, month: 1, day: 0 }
+      if (dateNumber === 0) return { year: 1, month: 1, day: 0 };
 
-    const months = this.toObject().months;
-    const oneYearDays = months.reduce((sum, month) => sum + month.days, 0);
+      let remainingDays = dateNumber;
+      const months = this.toObject().months;
+      const oneYearDays = months.reduce((sum, month) => sum + month.days, 0);
 
-    const year = Math.floor(remainingDays / oneYearDays);
-    remainingDays -= year * oneYearDays;
+      if (dateNumber > 0) {
+        let year = Math.floor(remainingDays / oneYearDays);
+        remainingDays -= year * oneYearDays;
+        year += 1
 
-    let month = 0;
-    for (let i = 0; i < months.length; i++) {
-      if (remainingDays < months[i].days) {
-        month = i + 1;
-        break;
+        let month = 0;
+        for (let i = 0; i < months.length; i++) {
+          if (remainingDays < months[i].days) {
+            month = i + 1;
+            break;
+          }
+          remainingDays -= months[i].days;
+        }
+
+        const day = remainingDays;
+        return { year, month, day };
       }
-      remainingDays -= months[i].days;
+
+      if (dateNumber < 0) {
+        // 处理负数日期
+        // 例如：-1 表示公元前1年的最后一天
+        // -oneYearDays 表示公元前1年的第1天
+        let remainingDays = -dateNumber; // 转为正数处理
+        const oneYearDays = months.reduce((sum, month) => sum + month.days, 0);
+
+        // 计算年份（负数）
+        let year = -Math.floor((remainingDays - 1) / oneYearDays) - 1;
+        remainingDays = (remainingDays - 1) % oneYearDays;
+
+        // 计算月份和天数（从最后一个月向前计算）
+        let month = months.length;
+        let day = 0;
+
+        for (let i = months.length - 1; i >= 0; i--) {
+          if (remainingDays < months[i].days) {
+            month = i + 1;
+            day = months[i].days - remainingDays;
+            break;
+          }
+          remainingDays -= months[i].days;
+        }
+
+        return { year, month, day };
+      }
     }
 
-    const day = remainingDays;
-
-    return { year, month, day };
+    throw new Error('Invalid dateNumber');
   }
 }

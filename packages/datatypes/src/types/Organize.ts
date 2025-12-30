@@ -13,6 +13,8 @@ export interface Organize {
   endAt?: StoryDate;
   /** 是否已出场，默认 false */
   appeared?: boolean;
+  /** 是否已离场，默认 false */
+  departed?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function createOrganize(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
   appeared?: boolean;
+  departed?: boolean;
 }): Organize {
   return {
     id: ulid(),
@@ -32,6 +35,7 @@ export function createOrganize(data: {
     startAt: data.startAt,
     endAt: data.endAt,
     appeared: data.appeared ?? false,
+    departed: data.departed ?? false,
   };
 }
 
@@ -56,5 +60,6 @@ export function fromOrganize(data: Record<string, any>): Organize {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     appeared: !!data.appeared,
+    departed: !!data.departed,
   };
 }

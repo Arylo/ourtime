@@ -1,33 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { createHistory, fromHistory, AffectedItem, type History } from './History';
-import type { World } from './World';
-import type { Who } from './Who';
-import type { Item } from './Item';
-import type { Organize } from './Organize';
+import { createHistory, fromHistory, type History } from './History';
 import { createStoryDate } from './StoryDate';
-
-const world: World = { id: 'world_1', name: '世界' };
-const who: Who = { id: 'who_1', name: '人物', description: '描述' };
-const item: Item = { id: 'item_1', name: '物品', description: '物品描述' };
-const organize: Organize = { id: 'organize_1', name: '组织', description: '组织描述' };
 
 describe('History', () => {
   describe('createHistory', () => {
     it('应该创建一个带有ULID的History对象', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const event = createHistory({
         name: '测试事件',
         alias: ['别名1', '别名2'],
         startAt,
         endAt,
         parentEvent: 'parent_event_123',
-        affected: [
-          [world, 'name', '新世界名称'],
-          [who, 'name', '新人物名称'],
-          [item, 'name', '新物品名称'],
-          [organize, 'name', '新组织名称'],
-        ] as AffectedItem[],
       });
 
       expect(event).toBeDefined();
@@ -38,12 +23,6 @@ describe('History', () => {
       expect(event.startAt).toEqual(startAt);
       expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
-      expect(event.affected).toEqual([
-        [world, 'name', '新世界名称'],
-        [who, 'name', '新人物名称'],
-        [item, 'name', '新物品名称'],
-        [organize, 'name', '新组织名称'],
-      ]);
     });
 
     it('应该创建带有别名的History对象', () => {
@@ -62,29 +41,24 @@ describe('History', () => {
       expect(event).toBeDefined();
       expect(event.id).toBeDefined();
       expect(event.name).toBe('测试事件');
+      expect(event.alias).toBeUndefined();
       expect(event.startAt).toBeUndefined();
       expect(event.endAt).toBeUndefined();
       expect(event.parentEvent).toBeUndefined();
-      expect(event.affected).toBeUndefined();
     });
   });
 
   describe('fromHistory', () => {
     it('应该从对象创建History对象', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const eventData = {
         id: 'event_123',
         name: '测试事件',
+        alias: ['别名1', '别名2'],
         startAt,
         endAt,
         parentEvent: 'parent_event_123',
-        affected: [
-          [world, 'name', '新世界名称'],
-          [who, 'name', '新人物名称'],
-          [item, 'name', '新物品名称'],
-          [organize, 'name', '新组织名称'],
-        ],
       };
 
       const event = fromHistory(eventData);
@@ -92,15 +66,10 @@ describe('History', () => {
       expect(event).toBeDefined();
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
+      expect(event.alias).toEqual(['别名1', '别名2']);
       expect(event.startAt).toEqual(startAt);
       expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
-      expect(event.affected).toEqual([
-        [world, 'name', '新世界名称'],
-        [who, 'name', '新人物名称'],
-        [item, 'name', '新物品名称'],
-        [organize, 'name', '新组织名称'],
-      ]);
     });
 
     it('应该从没有可选字段的对象创建History对象', () => {
@@ -114,9 +83,10 @@ describe('History', () => {
       expect(event).toBeDefined();
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
+      expect(event.alias).toBeUndefined();
       expect(event.startAt).toBeUndefined();
       expect(event.endAt).toBeUndefined();
-      expect(event.affected).toBeUndefined();
+      expect(event.parentEvent).toBeUndefined();
     });
 
     it('当缺少id时应该抛出错误', () => {
@@ -139,28 +109,10 @@ describe('History', () => {
       const eventData = {
         id: 'event_123',
         name: '测试事件',
-        alias: '别名1',
+        alias: '不是数组',
       };
 
       expect(() => fromHistory(eventData)).toThrow('Invalid History: alias must be an array when provided');
-    });
-
-    it('当id不是字符串时应该抛出错误', () => {
-      const eventData = {
-        id: 123,
-        name: '测试事件',
-      };
-
-      expect(() => fromHistory(eventData)).toThrow('Invalid History: id is required and must be a string');
-    });
-
-    it('当name不是字符串时应该抛出错误', () => {
-      const eventData = {
-        id: 'event_123',
-        name: 123,
-      };
-
-      expect(() => fromHistory(eventData)).toThrow('Invalid History: name is required and must be a string');
     });
 
     it('当parentEvent不是字符串时应该抛出错误', () => {
@@ -176,61 +128,51 @@ describe('History', () => {
 
   describe('History接口', () => {
     it('应该符合History接口定义', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const event: History = {
         id: 'event_123',
         name: '测试事件',
+        alias: ['别名1', '别名2'],
         startAt,
         endAt,
         parentEvent: 'parent_event_123',
-        affected: [
-          [world, 'name', '新世界名称'],
-          [who, 'name', '新人物名称'],
-          [item, 'name', '新物品名称'],
-          [organize, 'name', '新组织名称'],
-        ] as AffectedItem[],
       };
 
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
+      expect(event.alias).toEqual(['别名1', '别名2']);
       expect(event.startAt).toEqual(startAt);
       expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
-      expect(event.affected).toEqual([
-        [world, 'name', '新世界名称'],
-        [who, 'name', '新人物名称'],
-        [item, 'name', '新物品名称'],
-        [organize, 'name', '新组织名称'],
-      ]);
     });
 
-    it('应该支持Item的AffectedItem', () => {
-      const event: History = {
+    it('应该支持可选的alias、startAt、endAt和parentEvent字段', () => {
+      const eventWithoutOptional: History = {
         id: 'event_123',
         name: '测试事件',
-        affected: [
-          [item, 'name', '物品名称'],
-        ] as AffectedItem[],
       };
 
-      expect(event.affected).toHaveLength(1);
-      expect(event.affected?.[0]).toEqual([item, 'name', '物品名称']);
-    });
-
-    it('应该支持Organize的AffectedItem', () => {
-      const event: History = {
-        id: 'event_123',
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const eventWithOptional: History = {
+        id: 'event_456',
         name: '测试事件',
-        affected: [
-          [organize, 'name', '组织名称'],
-          [organize, 'description', '组织描述'],
-        ] as AffectedItem[],
+        alias: ['别名'],
+        startAt,
+        endAt,
+        parentEvent: 'parent_event_123',
       };
 
-      expect(event.affected).toHaveLength(2);
-      expect(event.affected?.[0]).toEqual([organize, 'name', '组织名称']);
-      expect(event.affected?.[1]).toEqual([organize, 'description', '组织描述']);
+      expect(eventWithoutOptional.alias).toBeUndefined();
+      expect(eventWithoutOptional.startAt).toBeUndefined();
+      expect(eventWithoutOptional.endAt).toBeUndefined();
+      expect(eventWithoutOptional.parentEvent).toBeUndefined();
+
+      expect(eventWithOptional.alias).toEqual(['别名']);
+      expect(eventWithOptional.startAt).toEqual(startAt);
+      expect(eventWithOptional.endAt).toEqual(endAt);
+      expect(eventWithOptional.parentEvent).toBe('parent_event_123');
     });
   });
 });

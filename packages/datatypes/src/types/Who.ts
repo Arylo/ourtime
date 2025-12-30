@@ -1,5 +1,4 @@
 import { ulid } from 'ulid';
-import type { World } from './World';
 
 /**
  * Who - 表示一个人物
@@ -12,6 +11,8 @@ export interface Who {
   parents?: Who['id'][];
   /** 是否已出场，默认 false */
   appeared?: boolean;
+  /** 是否已离场，默认 false */
+  departed?: boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export function createWho(data: {
   alias?: string[];
   parents?: Who['id'][];
   appeared?: boolean;
+  departed?: boolean;
 }): Who {
   return {
     id: ulid(),
@@ -31,6 +33,7 @@ export function createWho(data: {
     alias: data.alias,
     parents: data.parents,
     appeared: data.appeared ?? false,
+    departed: data.departed ?? false,
   };
 }
 
@@ -54,6 +57,7 @@ export function fromWho(data: Record<string, any>): Who {
     alias: data.alias,
     parents: data.parents,
     appeared: !!data.appeared,
+    departed: !!data.departed,
     description: data.description,
   };
 }

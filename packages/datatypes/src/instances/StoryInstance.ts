@@ -1,3 +1,4 @@
+import { encode } from '@toon-format/toon'
 import { createStory, fromStory, type Story } from '../types/Story';
 import { match, P } from 'ts-pattern';
 import { createWorld } from '../types/World';
@@ -46,8 +47,15 @@ export class StoryInstance {
   public toObject() {
     return this.story
   }
-  public toJSON() {
-    return JSON.stringify(this.toObject())
+
+  public toData() {
+    const toon = encode(this.toObject(), {
+      indent: 2,
+      delimiter: ',',
+      keyFolding: 'off',
+      flattenDepth: Infinity
+    })
+    return toon
   }
 
   public listWorlds () {

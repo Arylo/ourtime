@@ -1,19 +1,9 @@
 import { ulid } from 'ulid';
 import { StoryDate, fromStoryDate } from './StoryDate';
-import type { World } from './World';
-import type { Who } from './Who';
-import type { Place } from './Place';
-import type { Item } from './Item';
-import type { Organize } from './Organize';
 
 /**
  * History - 表示一个事件
  */
-export type AffectedItem<
-  T extends World | Who | Place | Item | Organize = World | Who | Place | Item | Organize,
-  K extends Omit<keyof T, 'id'> = Omit<keyof T, 'id'>,
-> = [T, K, T[K & keyof T]];
-
 export interface History {
   id: string;
   name: string;
@@ -21,7 +11,6 @@ export interface History {
   startAt?: StoryDate;
   endAt?: StoryDate;
   parentEvent?: History['id'];
-  affected?: AffectedItem[];
 }
 
 /**
@@ -33,7 +22,6 @@ export function createHistory(data: {
   startAt?: StoryDate;
   endAt?: StoryDate;
   parentEvent?: History['id'];
-  affected?: AffectedItem[];
 }): History {
   return {
     id: ulid(),
@@ -42,7 +30,6 @@ export function createHistory(data: {
     startAt: data.startAt,
     endAt: data.endAt,
     parentEvent: data.parentEvent,
-    affected: data.affected,
   };
 }
 
@@ -74,6 +61,5 @@ export function fromHistory(data: Record<string, any>): History {
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     parentEvent: data.parentEvent,
-    affected: data.affected,
   };
 }

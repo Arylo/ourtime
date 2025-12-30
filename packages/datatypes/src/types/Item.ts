@@ -13,6 +13,8 @@ export interface Item {
   endAt?: StoryDate;
   /** 是否已出场，默认 false */
   appeared?: boolean;
+  /** 是否已离场，默认 false */
+  departed?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function createItem(data: {
   createdAt?: StoryDate;
   endAt?: StoryDate;
   appeared?: boolean;
+  departed?: boolean;
 }): Item {
   return {
     id: ulid(),
@@ -32,6 +35,7 @@ export function createItem(data: {
     createdAt: data.createdAt,
     endAt: data.endAt,
     appeared: data.appeared ?? false,
+    departed: data.departed ?? false,
   };
 }
 
@@ -56,5 +60,6 @@ export function fromItem(data: Record<string, any>): Item {
     createdAt: data.createdAt ? fromStoryDate(data.createdAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     appeared: !!data.appeared,
+    departed: !!data.departed,
   };
 }

@@ -21,6 +21,7 @@ import type { ItemPlace } from './ItemPlace';
 import type { ItemOrganize } from './ItemOrganize';
 import type { ItemWorld } from './ItemWorld';
 import type { Calendar } from './Calendar';
+import type { HistoryAffected } from './HistoryAffected';
 
 export type StoryDataType = {
   world: World[];
@@ -47,6 +48,7 @@ export type StoryDataType = {
   itemPlace: ItemPlace[];
   itemOrganize: ItemOrganize[];
   itemWorld: ItemWorld[];
+  historyAffected: HistoryAffected[];
 };
 
 /**
@@ -84,6 +86,7 @@ const getDefaultStoryData = (): StoryDataType => ({
   itemPlace: [],
   itemOrganize: [],
   itemWorld: [],
+  historyAffected: [],
 })
 
 /**

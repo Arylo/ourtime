@@ -4,6 +4,23 @@ import { Story } from "../types/Story";
 import { Timeline } from "../types/Timeline";
 import { createHistoryTimeline, HistoryTimelineRole } from "../types/HistoryTimeline";
 import type { TimelineInstance } from "./TimelineInstance";
+import { Organize } from "../types/Organize";
+import { OrganizeInstance } from "./OrganizeInstance";
+import { Who } from "../types/Who";
+import { WhoInstance } from "./WhoInstance";
+import { World } from "../types/World";
+import { WorldInstance } from "./WorldInstance";
+import { Place } from "../types/Place";
+import { PlaceInstance } from "./PlaceInstance";
+import { Item } from "../types/Item";
+import { ItemInstance } from "./ItemInstance";
+import {
+  createHistoryWorldAffected,
+  createHistoryOrganizeAffected,
+  createHistoryWhoAffected,
+  createHistoryPlaceAffected,
+  createHistoryItemAffected,
+} from "../types/HistoryAffected";
 
 export class HistoryInstance {
   private historyId: History['id'];
@@ -67,5 +84,90 @@ export class HistoryInstance {
     }));
 
     return this
+  }
+
+  affectWorld(likeWorld: string | World | WorldInstance, data: Partial<Omit<World, 'id'>>) {
+    const worldId = match(likeWorld)
+      .with({ id: P.string }, ({ id }) => id)
+      .with(P.string, (id) => id)
+      .exhaustive();
+    const existingWorld = this.story.map.world.find(w => w.id === worldId);
+    if (!existingWorld) {
+      throw new Error(`World with id ${worldId} not found in story map`);
+    }
+    const affected = createHistoryWorldAffected({
+      worldId: worldId,
+      data: data
+    });
+    this.story.map.historyAffected.push(affected);
+    return this;
+  }
+
+  affectOrganize(likeOrganize: string | Organize | OrganizeInstance, data: Partial<Omit<Organize, 'id'>>) {
+    const organizeId = match(likeOrganize)
+      .with({ id: P.string }, ({ id }) => id)
+      .with(P.string, (id) => id)
+      .exhaustive();
+    const existingOrganize = this.story.map.organizes.find(o => o.id === organizeId);
+    if (!existingOrganize) {
+      throw new Error(`Organize with id ${organizeId} not found in story map`);
+    }
+    const affected = createHistoryOrganizeAffected({
+      organizeId: organizeId,
+      data: data
+    });
+    this.story.map.historyAffected.push(affected);
+    return this;
+  }
+
+  affectWho(likeWho: string | Who | WhoInstance, data: Partial<Omit<Who, 'id'>>) {
+    const whoId = match(likeWho)
+      .with({ id: P.string }, ({ id }) => id)
+      .with(P.string, (id) => id)
+      .exhaustive();
+    const existingWho = this.story.map.who.find(w => w.id === whoId);
+    if (!existingWho) {
+      throw new Error(`Who with id ${whoId} not found in story map`);
+    }
+    const affected = createHistoryWhoAffected({
+      whoId: whoId,
+      data: data
+    });
+    this.story.map.historyAffected.push(affected);
+    return this;
+  }
+
+  affectPlace(likePlace: string | Place | PlaceInstance, data: Partial<Omit<Place, 'id'>>) {
+    const placeId = match(likePlace)
+      .with({ id: P.string }, ({ id }) => id)
+      .with(P.string, (id) => id)
+      .exhaustive();
+    const existingPlace = this.story.map.places.find(p => p.id === placeId);
+    if (!existingPlace) {
+      throw new Error(`Place with id ${placeId} not found in story map`);
+    }
+    const affected = createHistoryPlaceAffected({
+      placeId: placeId,
+      data: data
+    });
+    this.story.map.historyAffected.push(affected);
+    return this;
+  }
+
+  affectItem(likeItem: string | Item | ItemInstance, data: Partial<Omit<Item, 'id'>>) {
+    const itemId = match(likeItem)
+      .with({ id: P.string }, ({ id }) => id)
+      .with(P.string, (id) => id)
+      .exhaustive();
+    const existingItem = this.story.map.items.find(i => i.id === itemId);
+    if (!existingItem) {
+      throw new Error(`Item with id ${itemId} not found in story map`);
+    }
+    const affected = createHistoryItemAffected({
+      itemId: itemId,
+      data: data
+    });
+    this.story.map.historyAffected.push(affected);
+    return this;
   }
 }
