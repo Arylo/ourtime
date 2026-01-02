@@ -1,4 +1,4 @@
-import { newStory } from "../src/index";
+import { newStory, OrganizeWhoRole } from "../src/index";
 
 const story = newStory({
   name: '葬送的芙丽莲',
@@ -25,36 +25,14 @@ const hdCalendar = story.appendCalendar({
   ],
 });
 
-// 时间点对象
-const hdDateMap = {
-  // B.H.D. 时间点（英雄历之前）
-  '1000 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-1000), hdCalendar.year(-1000)),
-  '570 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-570), hdCalendar.year(-570)),
-  '370 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-370), hdCalendar.year(-370)),
-  '170 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-170), hdCalendar.year(-170)),
-  '76 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-76), hdCalendar.year(-76)),
-  '60 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-60), hdCalendar.year(-60)),
-  '53 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-53), hdCalendar.year(-53)),
-  '50 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-50), hdCalendar.year(-50)),
-  '20 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-20), hdCalendar.year(-20)),
-  '10 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-10), hdCalendar.year(-10)),
-  '1 B.H.D.': hdCalendar.getApproxStoryDate(hdCalendar.year(-1), hdCalendar.year(-1)),
+const bhdApprox = (year: number, endYear?: number) => hdCalendar.getApproxStoryDate(hdCalendar.year(0 - year), hdCalendar.year(0 - (endYear ?? year)))
+const hdApprox = (year: number, endYear?: number) => hdCalendar.getApproxStoryDate(hdCalendar.year(year), hdCalendar.year(endYear ?? year))
 
-  // H.D. 时间点（英雄历之后）
-  'H.D. 1': hdCalendar.getApproxStoryDate(hdCalendar.year(1), hdCalendar.year(1)),
-  'H.D. 11': hdCalendar.getApproxStoryDate(hdCalendar.year(11), hdCalendar.year(11)),
-  'H.D. 19': hdCalendar.getApproxStoryDate(hdCalendar.year(19), hdCalendar.year(19)),
-  'H.D. 20': hdCalendar.getApproxStoryDate(hdCalendar.year(20), hdCalendar.year(20)),
-  'H.D. 24~25': hdCalendar.getApproxStoryDate(hdCalendar.year(24), hdCalendar.year(25)),
-  'H.D. 25': hdCalendar.getApproxStoryDate(hdCalendar.year(25), hdCalendar.year(25)),
-  'H.D. 27': hdCalendar.getApproxStoryDate(hdCalendar.year(27), hdCalendar.year(27)),
-  'H.D. 28': hdCalendar.getApproxStoryDate(hdCalendar.year(28), hdCalendar.year(28)),
-  'H.D. 29': hdCalendar.getApproxStoryDate(hdCalendar.year(29), hdCalendar.year(29)),
-  'H.D. 30': hdCalendar.getApproxStoryDate(hdCalendar.year(30), hdCalendar.year(30)),
-  'H.D. 31': hdCalendar.getApproxStoryDate(hdCalendar.year(31), hdCalendar.year(31)),
-} as const;
+story.listWorlds()[0].appendPlace({ name: '南方大陸' })
+story.listWorlds()[0].appendPlace({ name: '中央大陸' })
+story.listWorlds()[0].appendPlace({ name: '北方大陸' })
 
-story.appendWho({ name: '赛丽艾' });
+const Serie = story.appendWho({ name: '赛丽艾' });
 const Flamme = story.appendWho({ name: '伏拉梅' });
 const Frieren = story.appendWho({ name: '芙莉莲' });
 story.appendWho({ name: '马哈特', alias: ['黄金乡马哈特'] });
@@ -88,27 +66,27 @@ const mainTimeline = story.listWorlds()[0].listTimelines()[0]
 // 1000 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '赛丽艾收伏拉梅为徒',
-  startAt: hdDateMap['1000 B.H.D.'],
-  endAt: hdDateMap['1000 B.H.D.'],
+  startAt: bhdApprox(1000),
+  endAt: bhdApprox(1000),
 });
 
 mainTimeline.appendHistory({
   name: '芙莉莲所居住的村庄被魔族屠杀，伏拉梅收留芙莉莲作为自己的弟子',
-  startAt: hdDateMap['1000 B.H.D.'],
-  endAt: hdDateMap['1000 B.H.D.'],
+  startAt: bhdApprox(1000),
+  endAt: bhdApprox(1000),
 });
 
 mainTimeline.appendHistory({
   name: '伏拉梅将自己与芙莉莲曾经的居所封印，并在其中留下了自己的手记',
-  startAt: hdDateMap['1000 B.H.D.'],
-  endAt: hdDateMap['1000 B.H.D.'],
+  startAt: bhdApprox(1000),
+  endAt: bhdApprox(1000),
 });
 
 mainTimeline
   .appendHistory({
     name: '伏拉梅过世',
-    startAt: hdDateMap['1000 B.H.D.'],
-    endAt: hdDateMap['1000 B.H.D.'],
+    startAt: bhdApprox(1000),
+    endAt: bhdApprox(1000),
   })
   .affectWho(Flamme, {
     appeared: false,
@@ -118,29 +96,29 @@ mainTimeline
 // 570 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '芙莉莲败于黄金乡马哈特，右手被黄金化，花了近100年才将其解除',
-  startAt: hdDateMap['570 B.H.D.'],
-  endAt: hdDateMap['570 B.H.D.'],
+  startAt: bhdApprox(570),
+  endAt: bhdApprox(570),
 });
 
 // 370 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '佛鲁爷爷开始守护自己的村子',
-  startAt: hdDateMap['370 B.H.D.'],
-  endAt: hdDateMap['370 B.H.D.'],
+  startAt: bhdApprox(370),
+  endAt: bhdApprox(370),
 });
 
 // 170 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '盖安开始在托尔大溪谷上建设桥梁',
-  startAt: hdDateMap['170 B.H.D.'],
-  endAt: hdDateMap['170 B.H.D.'],
+  startAt: bhdApprox(170),
+  endAt: bhdApprox(170),
 });
 
 // 76 B.H.D.的事件
 mainTimeline.appendHistory({
   name: '勇者辛美尔出生',
-  startAt: hdDateMap['76 B.H.D.'],
-  endAt: hdDateMap['76 B.H.D.'],
+  startAt: bhdApprox(76),
+  endAt: bhdApprox(76),
 })
   .affectWho(Himmel, {
     appeared: true,
@@ -149,96 +127,108 @@ mainTimeline.appendHistory({
 // 60 B.H.D.之前的事件
 mainTimeline.appendHistory({
   name: '南之勇者邀请芙莉莲，遭拒',
-  startAt: hdDateMap['60 B.H.D.'],
-  endAt: hdDateMap['60 B.H.D.'],
+  startAt: bhdApprox(60),
+  endAt: bhdApprox(60),
 });
 
 // 60 B.H.D.的事件
 mainTimeline
   .appendHistory({
     name: '勇者小队出发旅程',
-    startAt: hdDateMap['60 B.H.D.'],
-    endAt: hdDateMap['60 B.H.D.'],
+    startAt: bhdApprox(60),
+    endAt: bhdApprox(60),
   })
   .affectOrganize(BraveTeam, {
-    startAt: hdDateMap['60 B.H.D.'],
+    startAt: bhdApprox(60),
     appeared: true,
   })
+BraveTeam
+  .inviteWho(Himmel, { role: OrganizeWhoRole.LEADER, startAt: bhdApprox(60) })
+  .inviteWho(Frieren, { role: OrganizeWhoRole.MEMBER, startAt: bhdApprox(60) })
+  .inviteWho(Heiter, { role: OrganizeWhoRole.MEMBER, startAt: bhdApprox(60) })
+  .inviteWho(Eisen, { role: OrganizeWhoRole.MEMBER, startAt: bhdApprox(60) });
 
 // 60 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '南之勇者对战七崩贤与全知的修拉哈特，讨伐其中3人，自己与全知的修拉哈特同归于尽',
-  startAt: hdDateMap['60 B.H.D.'],
-  endAt: hdDateMap['60 B.H.D.'],
+  startAt: bhdApprox(60),
+  endAt: bhdApprox(60),
 });
 
 // 60 B.H.D.之后的事件
 mainTimeline.appendHistory({
   name: '勇者小队对战腐败贤者古瓦尔，将其封印',
-  startAt: hdDateMap['60 B.H.D.'],
-  endAt: hdDateMap['60 B.H.D.'],
+  startAt: bhdApprox(60),
+  endAt: bhdApprox(60),
 });
 
 // 53 B.H.D.的事件
 mainTimeline.appendHistory({
   name: '八十年后的芙莉莲依靠女神之碑回到了过去',
-  startAt: hdDateMap['53 B.H.D.'],
-  endAt: hdDateMap['53 B.H.D.'],
+  startAt: bhdApprox(53),
+  endAt: bhdApprox(53),
 });
 
 // 50 B.H.D.之前的事件
 mainTimeline.appendHistory({
   name: '黄金乡马哈特效命于维伊泽的领主格鲁克',
-  startAt: hdDateMap['50 B.H.D.'],
-  endAt: hdDateMap['50 B.H.D.'],
+  startAt: bhdApprox(50),
+  endAt: bhdApprox(50),
 });
 
 // 50 B.H.D.的事件
 mainTimeline
   .appendHistory({
     name: '勇者小队成功讨伐魔王，回到王都',
-    startAt: hdDateMap['50 B.H.D.'],
-    endAt: hdDateMap['50 B.H.D.'],
+    startAt: bhdApprox(50),
+    endAt: bhdApprox(50),
   })
   .affectOrganize(BraveTeam, {
-    endAt: hdDateMap['50 B.H.D.'],
+    endAt: bhdApprox(50),
     appeared: false,
     departed: true,
   })
 
 // 20 B.H.D.前后的事件
-mainTimeline.appendHistory({
-  name: '赛丽艾建立大陆魔法协会',
-  startAt: hdDateMap['20 B.H.D.'],
-  endAt: hdDateMap['20 B.H.D.'],
-});
+mainTimeline
+  .appendHistory({
+    name: '赛丽艾建立大陆魔法协会',
+    startAt: bhdApprox(20),
+    endAt: bhdApprox(20),
+  })
+  .affectOrganize(MagicAssociation, {
+    startAt: bhdApprox(20),
+    appeared: true,
+  });
+MagicAssociation
+  .inviteWho(Serie, { role: OrganizeWhoRole.LEADER, startAt: bhdApprox(20) });
 
 mainTimeline.appendHistory({
   name: '黄金乡马哈特将维伊泽黄金化，之后被赛丽艾封印在维伊泽内',
-  startAt: hdDateMap['20 B.H.D.'],
-  endAt: hdDateMap['20 B.H.D.'],
+  startAt: bhdApprox(20),
+  endAt: bhdApprox(20),
 });
 
 // 10 B.H.D.前后的事件
 mainTimeline.appendHistory({
   name: '飞行魔法成功为人类所解析利用',
-  startAt: hdDateMap['10 B.H.D.'],
-  endAt: hdDateMap['10 B.H.D.'],
+  startAt: bhdApprox(10),
+  endAt: bhdApprox(10),
 });
 
 // 1 B.H.D.的事件
 mainTimeline.appendHistory({
   name: '勇者小队重聚',
-  startAt: hdDateMap['1 B.H.D.'],
-  endAt: hdDateMap['1 B.H.D.'],
+  startAt: bhdApprox(1),
+  endAt: bhdApprox(1),
 });
 
 // H.D. 1的事件
 mainTimeline
   .appendHistory({
     name: '勇者辛美尔过世',
-    startAt: hdDateMap['H.D. 1'],
-    endAt: hdDateMap['H.D. 1'],
+    startAt: hdApprox(1),
+    endAt: hdApprox(1),
   })
   .affectWho(Himmel, {
     appeared: false,
@@ -249,8 +239,8 @@ mainTimeline
 mainTimeline
   .appendHistory({
     name: '休塔尔克、菲伦出生',
-    startAt: hdDateMap['H.D. 11'],
-    endAt: hdDateMap['H.D. 11'],
+    startAt: hdApprox(11),
+    endAt: hdApprox(11),
   })
   .affectWho(Stark, {
     appeared: true,
@@ -261,61 +251,63 @@ mainTimeline
 
 mainTimeline.appendHistory({
   name: '三大魔法使之一、被称为"叛逆的魔女"的精灵米奴丝在南方大陆引发了惨烈的战乱，疑似被当时是无名小卒的列维所杀，其圣杖之证也被列维获得',
-  startAt: hdDateMap['H.D. 11'],
-  endAt: hdDateMap['H.D. 11'],
+  startAt: hdApprox(11),
+  endAt: hdApprox(11),
 });
 
 // H.D. 19的事件
 mainTimeline.appendHistory({
   name: '赞因的同伴「大猩猩战士」开始冒险',
-  startAt: hdDateMap['H.D. 19'],
-  endAt: hdDateMap['H.D. 19'],
+  startAt: hdApprox(19),
+  endAt: hdApprox(19),
 });
 
 // H.D. 20之前的事件
 mainTimeline.appendHistory({
   name: '海塔收留菲伦',
-  startAt: hdDateMap['H.D. 20'],
-  endAt: hdDateMap['H.D. 20'],
+  startAt: hdApprox(20),
+  endAt: hdApprox(20),
 });
 
 // H.D. 20的事件
 mainTimeline.appendHistory({
   name: '芙莉莲拜访海塔，收菲伦为徒',
-  startAt: hdDateMap['H.D. 20'],
-  endAt: hdDateMap['H.D. 20'],
+  startAt: hdApprox(20),
+  endAt: hdApprox(20),
 });
 
 // H.D. 20前后的事件
 mainTimeline.appendHistory({
   name: '艾泽收休塔尔克为徒',
-  startAt: hdDateMap['H.D. 20'],
-  endAt: hdDateMap['H.D. 20'],
+  startAt: hdApprox(20),
+  endAt: hdApprox(20),
 });
 
 // H.D. 24~25的事件
 mainTimeline
   .appendHistory({
     name: '海塔过世，芙莉莲与菲伦重新踏上旅途',
-    startAt: hdDateMap['H.D. 24~25'],
-    endAt: hdDateMap['H.D. 24~25'],
+    startAt: hdApprox(24, 25),
+    endAt: hdApprox(24, 25),
   })
   .affectWho(Heiter, {
     appeared: false,
     departed: true,
   })
   .affectOrganize(FrierenTeam, {
-    startAt: hdDateMap['H.D. 25'],
+    startAt: hdApprox(25),
     appeared: true,
   })
-
+FrierenTeam
+  .inviteWho(Frieren, { role: OrganizeWhoRole.LEADER, startAt: hdApprox(25) })
+  .inviteWho(Fern, { role: OrganizeWhoRole.MEMBER, startAt: hdApprox(25) });
 
 // H.D. 27的事件
 mainTimeline
   .appendHistory({
     name: '芙莉莲与菲伦解除腐败贤者古瓦尔的封印，并将其讨伐',
-    startAt: hdDateMap['H.D. 27'],
-    endAt: hdDateMap['H.D. 27'],
+    startAt: hdApprox(27),
+    endAt: hdApprox(27),
   })
   .affectWho(Qual, {
     departed: true,
@@ -324,22 +316,24 @@ mainTimeline
 // H.D. 28的事件
 mainTimeline.appendHistory({
   name: '艾泽邀请芙莉莲重返伏拉梅故居，芙莉莲得知「天国」可能在曾经的魔王城，将其设定为旅途目标',
-  startAt: hdDateMap['H.D. 28'],
-  endAt: hdDateMap['H.D. 28'],
+  startAt: hdApprox(28),
+  endAt: hdApprox(28),
 });
 
 mainTimeline
   .appendHistory({
     name: '休塔尔克加入芙莉莲小队',
-    startAt: hdDateMap['H.D. 28'],
-    endAt: hdDateMap['H.D. 28'],
+    startAt: hdApprox(28),
+    endAt: hdApprox(28),
   })
+FrierenTeam
+  .inviteWho(Stark, { role: OrganizeWhoRole.MEMBER, startAt: hdApprox(28) });
 
 mainTimeline
   .appendHistory({
     name: '芙莉莲等人成功讨伐断头台阿乌拉与其手下的斩首官',
-    startAt: hdDateMap['H.D. 28'],
-    endAt: hdDateMap['H.D. 28'],
+    startAt: hdApprox(28),
+    endAt: hdApprox(28),
   })
   .affectWho(Aura, {
     appeared: false,
@@ -347,45 +341,52 @@ mainTimeline
   })
 
 // H.D. 29的事件
-mainTimeline.appendHistory({
-  name: '赞因加入芙莉莲小队',
-  startAt: hdDateMap['H.D. 29'],
-  endAt: hdDateMap['H.D. 29'],
-});
+mainTimeline
+  .appendHistory({
+    name: '赞因加入芙莉莲小队',
+    startAt: hdApprox(29),
+    endAt: hdApprox(29),
+  });
+FrierenTeam
+  .inviteWho(Serie, { role: OrganizeWhoRole.MEMBER, startAt: hdApprox(29) });
 
 mainTimeline.appendHistory({
   name: '赞因离开芙莉莲小队',
-  startAt: hdDateMap['H.D. 29'],
-  endAt: hdDateMap['H.D. 29'],
+  startAt: hdApprox(29),
+  endAt: hdApprox(29),
 });
+FrierenTeam
+  .removeWho(Serie, { endAt: hdApprox(29) });
 
 mainTimeline.appendHistory({
   name: '菲伦通过一级魔法使测验',
-  startAt: hdDateMap['H.D. 29'],
-  endAt: hdDateMap['H.D. 29'],
+  startAt: hdApprox(29),
+  endAt: hdApprox(29),
 });
 
 mainTimeline.appendHistory({
   name: '芙莉莲等人成功讨伐黄金乡马哈特与索莉缇尔，解除了覆盖维伊泽的黄金化',
-  startAt: hdDateMap['H.D. 30'],
-  endAt: hdDateMap['H.D. 30'],
+  startAt: hdApprox(30),
+  endAt: hdApprox(30),
 });
 
 // H.D. 31的事件
 mainTimeline.appendHistory({
   name: '芙莉莲依靠女神之碑回到了八十年前，后来在当时的勇者小队的帮助下返回未来',
-  startAt: hdDateMap['H.D. 31'],
-  endAt: hdDateMap['H.D. 31'],
+  startAt: hdApprox(31),
+  endAt: hdApprox(31),
 });
 
 mainTimeline.appendHistory({
   name: '帝国举办国庆节，赛丽艾方面得到情报称影之战士打算暗杀赛丽艾',
-  startAt: hdDateMap['H.D. 31'],
-  endAt: hdDateMap['H.D. 31'],
+  startAt: hdApprox(31),
+  endAt: hdApprox(31),
 });
 
 mainTimeline.appendHistory({
   name: '赞因回归芙莉莲小队',
-  startAt: hdDateMap['H.D. 31'],
-  endAt: hdDateMap['H.D. 31'],
+  startAt: hdApprox(31),
+  endAt: hdApprox(31),
 });
+FrierenTeam
+  .inviteWho(Serie, { startAt: hdApprox(31) });

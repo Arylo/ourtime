@@ -23,6 +23,15 @@ describe('Organize', () => {
       expect(organize.endAt).toEqual(endAt);
     });
 
+    it('应该创建带有affiliatedId的Organize对象', () => {
+      const organize = createOrganize({
+        name: '主组织',
+        affiliatedId: 'sub_org_001',
+      });
+      expect(organize).toBeDefined();
+      expect(organize.affiliatedId).toBe('sub_org_001');
+    });
+
     it('应该创建没有可选日期的Organize对象', () => {
       const organize = createOrganize({
         name: '测试组织',
@@ -39,9 +48,20 @@ describe('Organize', () => {
   });
 
   describe('fromOrganize', () => {
+    it('应该从对象创建带有affiliatedId的Organize对象', () => {
+      const organizeData = {
+        id: 'org_001',
+        name: '主组织',
+        affiliatedId: 'sub_org_001',
+      };
+      const organize = fromOrganize(organizeData);
+      expect(organize).toBeDefined();
+      expect(organize.affiliatedId).toBe('sub_org_001');
+    });
+
     it('应该从对象创建Organize对象', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organizeData = {
         id: 'org_123',
         name: '测试组织',
@@ -58,6 +78,15 @@ describe('Organize', () => {
       expect(organize.description).toBe('这是一个测试组织');
       expect(organize.startAt).toEqual(startAt);
       expect(organize.endAt).toEqual(endAt);
+    });
+
+    it('当affiliatedId不是字符串时应该抛出错误', () => {
+      const organizeData = {
+        id: 'org_001',
+        name: '主组织',
+        affiliatedId: 123,
+      };
+      expect(() => fromOrganize(organizeData)).toThrow('Invalid Organize: affiliatedId must be a string');
     });
 
     it('应该从没有可选字段的对象创建Organize对象', () => {
@@ -138,8 +167,8 @@ describe('Organize', () => {
 
   describe('Organize接口', () => {
     it('应该符合Organize接口定义', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organize: Organize = {
         id: 'org_123',
         name: '测试组织',
@@ -155,6 +184,15 @@ describe('Organize', () => {
       expect(organize.endAt).toEqual(endAt);
     });
 
+    it('应该支持affiliatedId字段', () => {
+      const organize: Organize = {
+        id: 'org_001',
+        name: '主组织',
+        affiliatedId: 'sub_org_001',
+      };
+      expect(organize.affiliatedId).toBe('sub_org_001');
+    });
+
     it('应该支持可选的startAt、endAt和location字段', () => {
       const organizeWithoutOptional: Organize = {
         id: 'org_123',
@@ -162,8 +200,8 @@ describe('Organize', () => {
         description: '这是一个测试组织',
       };
 
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
+      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const organizeWithOptional: Organize = {
         id: 'org_456',
         name: '测试组织',

@@ -9,6 +9,8 @@ export interface Organize {
   id: string;
   name: string;
   description?: string;
+  /** 附属组织 id */
+  affiliatedId?: Organize['id'];
   startAt?: StoryDate;
   endAt?: StoryDate;
   /** 是否已出场，默认 false */
@@ -23,6 +25,7 @@ export interface Organize {
 export function createOrganize(data: {
   name: string;
   description?: string;
+  affiliatedId?: Organize['id'];
   startAt?: StoryDate;
   endAt?: StoryDate;
   appeared?: boolean;
@@ -32,6 +35,7 @@ export function createOrganize(data: {
     id: ulid(),
     name: data.name,
     description: data.description,
+    affiliatedId: data.affiliatedId,
     startAt: data.startAt,
     endAt: data.endAt,
     appeared: data.appeared ?? false,
@@ -52,11 +56,15 @@ export function fromOrganize(data: Record<string, any>): Organize {
   if (data.description !== undefined && typeof data.description !== 'string') {
     throw new Error('Invalid Organize: description is required and must be a string');
   }
+  if (data.affiliatedId !== undefined && typeof data.affiliatedId !== 'string') {
+    throw new Error('Invalid Organize: affiliatedId must be a string');
+  }
 
   return {
     id: data.id,
     name: data.name,
     description: data.description,
+    affiliatedId: data.affiliatedId,
     startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
     endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     appeared: !!data.appeared,

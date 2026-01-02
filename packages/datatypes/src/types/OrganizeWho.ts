@@ -12,15 +12,19 @@ export enum OrganizeWhoRole {
 }
 
 /**
+ * OrganizeWhoKey - 组织与人物关系的键
+ */
+export type OrganizeWhoKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * OrganizeWho - 表示组织与人物之间的关系
  */
 export interface OrganizeWho {
   id: string;
   organizeId: Organize['id'];
   whoId: Who['id'];
-  role: OrganizeWhoRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: OrganizeWhoKey;
+  value: OrganizeWhoRole | StoryDate;
 }
 
 /**
@@ -29,18 +33,28 @@ export interface OrganizeWho {
 export function createOrganizeWho(data: {
   organizeId: Organize['id'];
   whoId: Who['id'];
-  role: OrganizeWhoRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): OrganizeWho;
+export function createOrganizeWho(data: {
+  organizeId: Organize['id'];
+  whoId: Who['id'];
+  key: 'role';
+  value: OrganizeWhoRole;
+}): OrganizeWho;
+export function createOrganizeWho(data: {
+  organizeId: Organize['id'];
+  whoId: Who['id'];
+  key: OrganizeWhoKey;
+  value: OrganizeWhoRole | StoryDate;
 }): OrganizeWho {
   validateOrganizeWho(data);
   return {
     id: ulid(),
     organizeId: data.organizeId,
     whoId: data.whoId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -51,16 +65,25 @@ export function fromOrganizeWho(data: Record<string, any>): OrganizeWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid OrganizeWho: id is required and must be a string');
   }
-  validateOrganizeWho(data);
 
-  return {
+  const key = data.key as OrganizeWhoKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     organizeId: data.organizeId,
     whoId: data.whoId,
-    role: data.role as OrganizeWhoRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateOrganizeWho(result);
+
+  return result;
 }
 
 function validateOrganizeWho(data: Record<string, any>) {
@@ -70,8 +93,15 @@ function validateOrganizeWho(data: Record<string, any>) {
   if (!data.whoId || typeof data.whoId !== 'string') {
     throw new Error('Invalid OrganizeWho: whoId is required and must be a string');
   }
-  if (!data.role || !Object.values(OrganizeWhoRole).includes(data.role as OrganizeWhoRole)) {
-    throw new Error('Invalid OrganizeWho: role is required and must be a valid OrganizeWhoRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid OrganizeWho: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid OrganizeWho: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(OrganizeWhoRole).includes(data.value as OrganizeWhoRole)) {
+    throw new Error('Invalid OrganizeWho: role value must be a valid OrganizeWhoRole');
   }
   return true;
 }

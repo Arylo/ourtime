@@ -5,6 +5,7 @@ import { Who } from "../types/Who";
 import { loadWho } from "./who";
 import { createOrganizeWho, OrganizeWho, OrganizeWhoRole } from "../types/OrganizeWho";
 import type { WhoInstance } from "./WhoInstance";
+import { StoryDate } from "../types/StoryDate";
 
 export class OrganizeInstance {
   private organizeId: Organize['id'];
@@ -44,12 +45,14 @@ export class OrganizeInstance {
   }
 
   public listWhos () {
-    return this.story.map.organizeWho
+    const whoIds = Array.from(new Set(this.story.map.organizeWho
       .filter(ow => ow.organizeId === this.id)
-      .map(ow => {
-        const whoData = this.story.map.who.find(w => w.id === ow.whoId);
+      .map(ow => ow.whoId)));
+
+    return whoIds.map(whoId => {
+        const whoData = this.story.map.who.find(w => w.id === whoId);
         if (!whoData) {
-          throw new Error(`Who with id ${ow.whoId} not found in story map`);
+          throw new Error(`Who with id ${whoId} not found in story map`);
         }
         return loadWho(this.story, whoData);
       })
@@ -57,7 +60,7 @@ export class OrganizeInstance {
 
   public inviteWho(
     likeWho: string | Who | WhoInstance,
-    options: Partial<Pick<OrganizeWho, 'role' | 'startAt'>> = { role: OrganizeWhoRole.MEMBER },
+    options: { role?: OrganizeWhoRole, startAt?: StoryDate } = { role: OrganizeWhoRole.MEMBER },
   ) {
     const id = match(likeWho)
       .with({ id: P.string }, ({ id }) => id)
@@ -69,61 +72,97 @@ export class OrganizeInstance {
       throw new Error(`Who with id ${id} not found in story map`);
     }
 
-    const exist = this.story.map.organizeWho.find(ow => ow.organizeId === this.id && ow.whoId === id);
-    if (exist) {
-      throw new Error(`Who with id ${id} is already a member of organize ${this.id}`);
+    if (options.role) {
+      this.story.map.organizeWho.push(createOrganizeWho({
+        organizeId: this.id,
+        whoId: id,
+        key: 'role',
+        value: options.role,
+      }));
     }
 
-    this.story.map.organizeWho.push(createOrganizeWho({
-      organizeId: this.id,
-      whoId: id,
-      role: options.role ?? OrganizeWhoRole.MEMBER,
-      startAt: options.startAt,
-    }));
+    if (options.startAt) {
+      this.story.map.organizeWho.push(createOrganizeWho({
+        organizeId: this.id,
+        whoId: id,
+        key: 'startAt',
+        value: options.startAt,
+      }));
+    }
 
     return this
   }
 
-  public removeWho(likeWho: string | Who | WhoInstance) {
+  public removeWho(likeWho: string | Who | WhoInstance, options: { endAt: StoryDate }) {
     const id = match(likeWho)
       .with({ id: P.string }, ({ id }) => id)
       .with(P.string, (id) => id)
       .exhaustive();
 
-    const index = this.story.map.organizeWho.findIndex(ow => ow.organizeId === this.id && ow.whoId === id);
-    if (index === -1) {
-      throw new Error(`Who with id ${id} is not a member of organize ${this.id}`);
+    const existingWho = this.story.map.who.find(w => w.id === id);
+    if (!existingWho) {
+      throw new Error(`Who with id ${id} not found in story map`);
     }
 
-    this.story.map.organizeWho.splice(index, 1);
+    if (options.endAt) {
+      this.story.map.organizeWho.push(createOrganizeWho({
+        organizeId: this.id,
+        whoId: id,
+        key: 'endAt',
+        value: options.endAt,
+      }));
+    }
 
     return this
   }
 
   public changeWho(
     likeWho: string | Who | WhoInstance,
-    data: Partial<Pick<OrganizeWho, 'role' | 'startAt' | 'endAt'>> = {}
+    data: { role?: OrganizeWhoRole } = {}
 ) {
     const id = match(likeWho)
       .with({ id: P.string }, ({ id }) => id)
       .with(P.string, (id) => id)
       .exhaustive();
 
-    const organizeWho = this.story.map.organizeWho.find(ow => ow.organizeId === this.id && ow.whoId === id);
-    if (!organizeWho) {
+    const entries = this.story.map.organizeWho.filter(ow => ow.organizeId === this.id && ow.whoId === id);
+    if (entries.length === 0) {
       throw new Error(`Who with id ${id} is not a member of organize ${this.id}`);
     }
 
     if (data.role !== undefined) {
-      organizeWho.role = data.role;
-    }
-    if (data.startAt !== undefined) {
-      organizeWho.startAt = data.startAt;
-    }
-    if (data.endAt !== undefined) {
-      organizeWho.endAt = data.endAt;
+      const roleEntry = entries.find(e => e.key === 'role');
+      if (roleEntry) {
+        roleEntry.value = data.role;
+      } else {
+        this.story.map.organizeWho.push(createOrganizeWho({
+          organizeId: this.id,
+          whoId: id,
+          key: 'role',
+          value: data.role,
+        }));
+      }
     }
 
     return this
+  }
+
+  /**
+   * 添加附属组织
+   */
+  public appendSubOrganize(organize: Omit<Parameters<typeof createOrganize>[0], 'affiliatedId'>) {
+    return new OrganizeInstance(this.story, {
+      ...organize,
+      affiliatedId: this.id,
+    });
+  }
+
+  /**
+   * 列出附属组织
+   */
+  public listSubOrganizes() {
+    return this.story.map.organizes
+      .filter(o => o.affiliatedId === this.id)
+      .map(o => new OrganizeInstance(this.story, o));
   }
 }

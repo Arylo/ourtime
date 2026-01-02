@@ -14,6 +14,7 @@ export type * from './types/HistoryRelation';
 export type * from './types/Organize';
 export type * from './types/OrganizePlace';
 export type * from './types/OrganizeWho';
+export { OrganizeWhoRole } from './types/OrganizeWho';
 export type * from './types/Item';
 export type * from './types/ItemWho';
 export type * from './types/ItemPlace';
