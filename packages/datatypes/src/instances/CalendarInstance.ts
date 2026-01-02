@@ -50,7 +50,7 @@ export class CalendarInstance {
     return this.genStoryDate({ isUnknown: true }) as UnknownStoryDate
   }
 
-  public getExactStoryDate(rangeStart: number, rangeEnd?: number) {
+  public genExactStoryDate(rangeStart: number, rangeEnd?: number) {
     return this.genStoryDate({
       rangeStart,
       rangeEnd: rangeEnd ?? rangeStart,
@@ -58,10 +58,10 @@ export class CalendarInstance {
     }) as ExactStoryDate;
   }
 
-  public getApproxStoryDate(rangeStart: number, rangeEnd: number, approx: true | ApproxType = true) {
+  public genApproxStoryDate(rangeStart: number, rangeEnd?: number, approx: true | ApproxType = true) {
     return this.genStoryDate({
       rangeStart,
-      rangeEnd,
+      rangeEnd: rangeEnd ?? rangeStart,
       approx: approx,
     }) as ApproxStoryDate;
   }

@@ -41,13 +41,13 @@ const rootTimeline = universe.listTimelines()[0]
 const dateMap = {
   unknownStoryDate: ceCalendar.getUnknownStoryDate(),
   // 公约前约30000年
-  BC30000Approx: ceCalendar.getApproxStoryDate(year(-30000), year(-30000)),
+  BC30000Approx: ceCalendar.genApproxStoryDate(year(-30000), year(-30000)),
   // 公约前约10000年
-  BC10000Approx: ceCalendar.getApproxStoryDate(year(-10000), year(-10000)),
+  BC10000Approx: ceCalendar.genApproxStoryDate(year(-10000), year(-10000)),
   // 公约前约30000年到约10000年
-  BC30000_10000Approx: ceCalendar.getApproxStoryDate(year(-30000), year(-10000)),
+  BC30000_10000Approx: ceCalendar.genApproxStoryDate(year(-30000), year(-10000)),
   // 公约前约3000年
-  BC3000Approx: ceCalendar.getApproxStoryDate(year(-3000), year(-3000)),
+  BC3000Approx: ceCalendar.genApproxStoryDate(year(-3000), year(-3000)),
 } as const
 
 // 第二部

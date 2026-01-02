@@ -7,9 +7,9 @@ import { createWho } from '../types/Who';
 import { createItem } from '../types/Item';
 import { createOrganize } from '../types/Organize';
 import { loadWorld, newWorld } from './world';
-import { newOrganize } from './organize';
-import { newItem } from './item';
-import { newWho } from './who';
+import { loadOrganize, newOrganize } from './organize';
+import { loadItem, newItem } from './item';
+import { loadWho, newWho } from './who';
 import { newCalendar } from './calendar';
 
 export class StoryInstance {
@@ -60,6 +60,37 @@ export class StoryInstance {
 
   public listWorlds () {
     return this.story.map.world.map(w => loadWorld(this.story, w));
+  }
+
+  public listWhos() {
+    return this.story.map.who.map(w => loadWho(this.story, w));
+  }
+
+  public listItems() {
+    return this.story.map.items.map(i => loadItem(this.story, i));
+  }
+
+  public listOrganizes() {
+    return this.story.map.organizes.map(o => loadOrganize(this.story, o));
+  }
+
+  public findWhoByName(name: string) {
+    return this.listWhos().find(w => {
+      const obj = w.toObject();
+      return obj.name === name || obj.alias?.includes(name);
+    });
+  }
+
+  public findItemByName(name: string) {
+    return this.listItems().find(i => i.toObject().name === name);
+  }
+
+  public findOrganizeByName(name: string) {
+    return this.listOrganizes().find(o => o.toObject().name === name);
+  }
+
+  public findWorldByName(name: string) {
+    return this.listWorlds().find(w => w.toObject().name === name);
   }
 
   public appendWorld(...args: Parameters<typeof createWorld>) {

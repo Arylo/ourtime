@@ -25,8 +25,8 @@ const hdCalendar = story.appendCalendar({
   ],
 });
 
-const bhdApprox = (year: number, endYear?: number) => hdCalendar.getApproxStoryDate(hdCalendar.year(0 - year), hdCalendar.year(0 - (endYear ?? year)))
-const hdApprox = (year: number, endYear?: number) => hdCalendar.getApproxStoryDate(hdCalendar.year(year), hdCalendar.year(endYear ?? year))
+const bhdApprox = (year: number, endYear?: number) => hdCalendar.genApproxStoryDate(hdCalendar.year(0 - year), hdCalendar.year(0 - (endYear ?? year)))
+const hdApprox = (year: number, endYear?: number) => hdCalendar.genApproxStoryDate(hdCalendar.year(year), hdCalendar.year(endYear ?? year))
 
 story.listWorlds()[0].appendPlace({ name: '南方大陸' })
 story.listWorlds()[0].appendPlace({ name: '中央大陸' })
@@ -89,7 +89,6 @@ mainTimeline
     endAt: bhdApprox(1000),
   })
   .affectWho(Flamme, {
-    appeared: false,
     departed: true,
   })
 
@@ -185,7 +184,6 @@ mainTimeline
   })
   .affectOrganize(BraveTeam, {
     endAt: bhdApprox(50),
-    appeared: false,
     departed: true,
   })
 
@@ -231,7 +229,6 @@ mainTimeline
     endAt: hdApprox(1),
   })
   .affectWho(Himmel, {
-    appeared: false,
     departed: true,
   })
 
@@ -291,7 +288,6 @@ mainTimeline
     endAt: hdApprox(24, 25),
   })
   .affectWho(Heiter, {
-    appeared: false,
     departed: true,
   })
   .affectOrganize(FrierenTeam, {
@@ -336,7 +332,6 @@ mainTimeline
     endAt: hdApprox(28),
   })
   .affectWho(Aura, {
-    appeared: false,
     departed: true,
   })
 

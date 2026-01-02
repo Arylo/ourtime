@@ -4,10 +4,12 @@ import { Organize } from './Organize';
 import { Item } from './Item';
 import { Place } from './Place';
 import { Who } from './Who';
+import { History } from './History';
 
 
 interface BaseHistoryAffected {
   id: string;
+  historyId: History['id'];
   /** 受影响的实体类型 */
   entityType: 'world' | 'who' | 'place' | 'item' | 'organize';
 }
@@ -53,11 +55,13 @@ export type HistoryAffected =
  * 创建一个新的 World 影响记录
  */
 export function createHistoryWorldAffected(data: {
+  historyId: History['id'];
   worldId: World['id'];
   data: Partial<Omit<World, 'id'>>;
 }): HistoryWorldAffected {
   return {
     id: ulid(),
+    historyId: data.historyId,
     entityType: 'world',
     entityId: data.worldId,
     data: data.data,
@@ -68,11 +72,13 @@ export function createHistoryWorldAffected(data: {
  * 创建一个新的 Organize 影响记录
  */
 export function createHistoryOrganizeAffected(data: {
+  historyId: History['id'];
   organizeId: Organize['id'];
   data: Partial<Omit<Organize, 'id'>>;
 }): HistoryOrganizeAffected {
   return {
     id: ulid(),
+    historyId: data.historyId,
     entityType: 'organize',
     entityId: data.organizeId,
     data: data.data,
@@ -83,11 +89,13 @@ export function createHistoryOrganizeAffected(data: {
  * 创建一个新的 Who 影响记录
  */
 export function createHistoryWhoAffected(data: {
+  historyId: History['id'];
   whoId: Who['id'];
   data: Partial<Omit<Who, 'id'>>;
 }): HistoryWhoAffected {
   return {
     id: ulid(),
+    historyId: data.historyId,
     entityType: 'who',
     entityId: data.whoId,
     data: data.data,
@@ -100,11 +108,13 @@ export function createHistoryWhoAffected(data: {
  * 创建一个新的 Place 影响记录
  */
 export function createHistoryPlaceAffected(data: {
+  historyId: History['id'];
   placeId: Place['id'];
   data: Partial<Omit<Place, 'id'>>;
 }): HistoryPlaceAffected {
   return {
     id: ulid(),
+    historyId: data.historyId,
     entityType: 'place',
     entityId: data.placeId,
     data: data.data,
@@ -115,11 +125,13 @@ export function createHistoryPlaceAffected(data: {
  * 创建一个新的 Item 影响记录
  */
 export function createHistoryItemAffected(data: {
+  historyId: History['id'];
   itemId: Item['id'];
   data: Partial<Omit<Item, 'id'>>;
 }): HistoryItemAffected {
   return {
     id: ulid(),
+    historyId: data.historyId,
     entityType: 'item',
     entityId: data.itemId,
     data: data.data,
@@ -133,6 +145,9 @@ export function fromHistoryAffected(data: Record<string, any>): HistoryAffected 
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryAffected: id is required and must be a string');
   }
+  if (!data.historyId || typeof data.historyId !== 'string') {
+    throw new Error('Invalid HistoryAffected: historyId is required and must be a string');
+  }
   if (!data.entityType || typeof data.entityType !== 'string') {
     throw new Error('Invalid HistoryAffected: entityType is required and must be a string');
   }
@@ -145,6 +160,7 @@ export function fromHistoryAffected(data: Record<string, any>): HistoryAffected 
 
   const base = {
     id: data.id,
+    historyId: data.historyId,
     entityType: data.entityType,
     entityId: data.entityId,
   };

@@ -2,7 +2,7 @@ import { match, P } from "ts-pattern";
 import { Story } from "../types/Story";
 import { createWorld, World } from "../types/World";
 import { createTimeline } from "../types/Timeline";
-import { createPlace } from "../types/Place";
+import { createPlace, Place } from "../types/Place";
 import { Who } from "../types/Who";
 import { createWorldWho, WorldWhoRole } from "../types/WorldWho";
 import { loadTimeline, newTimeline } from "./timeline";
@@ -14,6 +14,7 @@ export class WorldInstance {
   public get id () {
     return this.worldId;
   }
+
   public toObject () {
     return this.story.map.world.find(w => w.id === this.worldId)!;
   }
@@ -102,6 +103,10 @@ export class WorldInstance {
         }
         return loadPlace(this.story, this.toObject(), place);
       });
+  }
+
+  public findPlaceByName (name: Place['name']) {
+    return this.listPlaces().find(place => place.toObject().name === name);
   }
 
   public appendPlace (place: Parameters<typeof createPlace>[0]) {

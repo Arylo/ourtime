@@ -97,6 +97,7 @@ export class HistoryInstance {
       throw new Error(`World with id ${worldId} not found in story map`);
     }
     const affected = createHistoryWorldAffected({
+      historyId: this.id,
       worldId: worldId,
       data: data
     });
@@ -114,6 +115,7 @@ export class HistoryInstance {
       throw new Error(`Organize with id ${organizeId} not found in story map`);
     }
     const affected = createHistoryOrganizeAffected({
+      historyId: this.id,
       organizeId: organizeId,
       data: data
     });
@@ -131,6 +133,7 @@ export class HistoryInstance {
       throw new Error(`Who with id ${whoId} not found in story map`);
     }
     const affected = createHistoryWhoAffected({
+      historyId: this.id,
       whoId: whoId,
       data: data
     });
@@ -148,6 +151,7 @@ export class HistoryInstance {
       throw new Error(`Place with id ${placeId} not found in story map`);
     }
     const affected = createHistoryPlaceAffected({
+      historyId: this.id,
       placeId: placeId,
       data: data
     });
@@ -165,6 +169,7 @@ export class HistoryInstance {
       throw new Error(`Item with id ${itemId} not found in story map`);
     }
     const affected = createHistoryItemAffected({
+      historyId: this.id,
       itemId: itemId,
       data: data
     });

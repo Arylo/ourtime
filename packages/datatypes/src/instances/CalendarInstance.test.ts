@@ -156,9 +156,9 @@ describe('CalendarInstance', () => {
       });
     });
 
-    describe('getExactStoryDate', () => {
+    describe('genExactStoryDate', () => {
       it('应该返回精确日期', () => {
-        const exactDate = calendarInstance.getExactStoryDate(100);
+        const exactDate = calendarInstance.genExactStoryDate(100);
         expect(exactDate.calendarId).toBe(calendarInstance.id);
         expect(exactDate.rangeStart).toBe(100);
         expect(exactDate.rangeEnd).toBe(100);
@@ -168,15 +168,15 @@ describe('CalendarInstance', () => {
       });
 
       it('应该处理不同的起始和结束范围', () => {
-        const exactDate = calendarInstance.getExactStoryDate(100, 200);
+        const exactDate = calendarInstance.genExactStoryDate(100, 200);
         expect(exactDate.rangeStart).toBe(100);
         expect(exactDate.rangeEnd).toBe(200);
       });
     });
 
-    describe('getApproxStoryDate', () => {
+    describe('genApproxStoryDate', () => {
       it('应该返回近似日期（默认approx=true）', () => {
-        const approxDate = calendarInstance.getApproxStoryDate(100, 200);
+        const approxDate = calendarInstance.genApproxStoryDate(100, 200);
         expect(approxDate.calendarId).toBe(calendarInstance.id);
         expect(approxDate.rangeStart).toBe(100);
         expect(approxDate.rangeEnd).toBe(200);
@@ -186,17 +186,17 @@ describe('CalendarInstance', () => {
       });
 
       it('应该返回指定类型的近似日期', () => {
-        const approxDate = calendarInstance.getApproxStoryDate(100, 200, 'year');
+        const approxDate = calendarInstance.genApproxStoryDate(100, 200, 'year');
         expect(approxDate.approx).toBe('year');
       });
 
       it('应该返回月份级别的近似日期', () => {
-        const approxDate = calendarInstance.getApproxStoryDate(100, 200, 'month');
+        const approxDate = calendarInstance.genApproxStoryDate(100, 200, 'month');
         expect(approxDate.approx).toBe('month');
       });
 
       it('应该返回天数级别的近似日期', () => {
-        const approxDate = calendarInstance.getApproxStoryDate(100, 200, 'day');
+        const approxDate = calendarInstance.genApproxStoryDate(100, 200, 'day');
         expect(approxDate.approx).toBe('day');
       });
     });
