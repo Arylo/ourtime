@@ -2,11 +2,31 @@ import { newStory } from "../src";
 
 const story = newStory({ name: "无职转生" });
 
-story
-  .appendWorld({ name: '地球世界' })
-  .appendPlace({ name: '日本' })
-const SixWorld =  story
-  .appendWorld({ name: '六面世界' })
+const storyWorld = story.listWorlds()[0]
+const EarthWorld = storyWorld
+  .appendSubWorld({ name: '地球世界', appeared: true })
+EarthWorld.appendPlace({ name: '日本' })
+
+const SixWorld =  storyWorld
+  .appendSubWorld({ name: '六面世界' })
+
+const c = story.appendCalendar({
+  name: '甲龙历',
+  months: [
+    { name: '一月', days: 30 },
+    { name: '二月', days: 30 },
+    { name: '三月', days: 30 },
+    { name: '四月', days: 30 },
+    { name: '五月', days: 30 },
+    { name: '六月', days: 30 },
+    { name: '七月', days: 30 },
+    { name: '八月', days: 30 },
+    { name: '九月', days: 30 },
+    { name: '十月', days: 30 },
+    { name: '十一月', days: 30 },
+    { name: '十二月', days: 30 },
+  ],
+});
 
 SixWorld.appendPlace({ name: '中央大陆' })
   .appendSubPlace({ name: '阿斯拉王国' })
@@ -28,24 +48,6 @@ const Paul = story.appendWho({ name: '保罗·格雷拉特', alias: ['保罗'] }
 const Zenith = story.appendWho({ name: '塞妮丝·格雷拉特', alias: ['塞妮丝'] });
 const Lilia = story.appendWho({ name: '莉莉雅', alias: ['莉莉雅'] });
 
-const c = story.appendCalendar({
-  name: '甲龙历',
-  months: [
-    { name: '一月', days: 30 },
-    { name: '二月', days: 30 },
-    { name: '三月', days: 30 },
-    { name: '四月', days: 30 },
-    { name: '五月', days: 30 },
-    { name: '六月', days: 30 },
-    { name: '七月', days: 30 },
-    { name: '八月', days: 30 },
-    { name: '九月', days: 30 },
-    { name: '十月', days: 30 },
-    { name: '十一月', days: 30 },
-    { name: '十二月', days: 30 },
-  ],
-});
-
 const mainTimeline = SixWorld.listTimelines()[0]
 
 mainTimeline
@@ -53,6 +55,7 @@ mainTimeline
     name: '鲁迪乌斯出生',
     startAt: c.genApproxStoryDate(c.toDateNumber(407)),
   })
+  .affectWorld(EarthWorld, { departed: true })
   .affectWho(Rudeus, { appeared: true })
   .affectWho(Paul, { appeared: true })
   .affectWho(Eris, { appeared: true })
