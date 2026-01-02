@@ -11,15 +11,19 @@ export enum HistoryPlaceRole {
 }
 
 /**
+ * HistoryPlaceKey - 事件与地点关系的键
+ */
+export type HistoryPlaceKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * HistoryPlace - 表示事件与地点之间的关系
  */
 export interface HistoryPlace {
   id: string;
   historyId: History['id'];
   placeId: Place['id'];
-  role: HistoryPlaceRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: HistoryPlaceKey;
+  value: HistoryPlaceRole | StoryDate;
 }
 
 /**
@@ -28,18 +32,28 @@ export interface HistoryPlace {
 export function createHistoryPlace(data: {
   historyId: History['id'];
   placeId: Place['id'];
-  role: HistoryPlaceRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): HistoryPlace;
+export function createHistoryPlace(data: {
+  historyId: History['id'];
+  placeId: Place['id'];
+  key: 'role';
+  value: HistoryPlaceRole;
+}): HistoryPlace;
+export function createHistoryPlace(data: {
+  historyId: History['id'];
+  placeId: Place['id'];
+  key: HistoryPlaceKey;
+  value: HistoryPlaceRole | StoryDate;
 }): HistoryPlace {
   validateHistoryPlace(data);
   return {
     id: ulid(),
     historyId: data.historyId,
     placeId: data.placeId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -50,16 +64,25 @@ export function fromHistoryPlace(data: Record<string, any>): HistoryPlace {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryPlace: id is required and must be a string');
   }
-  validateHistoryPlace(data);
 
-  return {
+  const key = data.key as HistoryPlaceKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     historyId: data.historyId,
     placeId: data.placeId,
-    role: data.role as HistoryPlaceRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateHistoryPlace(result);
+
+  return result;
 }
 
 function validateHistoryPlace(data: Record<string, any>) {
@@ -69,8 +92,15 @@ function validateHistoryPlace(data: Record<string, any>) {
   if (!data.placeId || typeof data.placeId !== 'string') {
     throw new Error('Invalid HistoryPlace: placeId is required and must be a string');
   }
-  if (!data.role || !Object.values(HistoryPlaceRole).includes(data.role as HistoryPlaceRole)) {
-    throw new Error('Invalid HistoryPlace: role is required and must be a valid HistoryPlaceRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid HistoryPlace: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid HistoryPlace: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(HistoryPlaceRole).includes(data.value as HistoryPlaceRole)) {
+    throw new Error('Invalid HistoryPlace: role value must be a valid HistoryPlaceRole');
   }
   return true;
 }

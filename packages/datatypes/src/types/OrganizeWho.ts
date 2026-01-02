@@ -65,6 +65,15 @@ export function fromOrganizeWho(data: Record<string, any>): OrganizeWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid OrganizeWho: id is required and must be a string');
   }
+  if (!data.organizeId || typeof data.organizeId !== 'string') {
+    throw new Error('Invalid OrganizeWho: organizeId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid OrganizeWho: whoId is required and must be a string');
+  }
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid OrganizeWho: key is required and must be role, startAt or endAt');
+  }
 
   const key = data.key as OrganizeWhoKey;
   let value = data.value;

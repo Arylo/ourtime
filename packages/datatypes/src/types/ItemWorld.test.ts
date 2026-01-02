@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createItemWorld, fromItemWorld, ItemWorldRole } from './ItemWorld';
+import { createStoryDate } from './StoryDate';
 
 describe('ItemWorld', () => {
   describe('createItemWorld', () => {
@@ -7,41 +8,47 @@ describe('ItemWorld', () => {
       const itemWorld = createItemWorld({
         itemId: 'item_1',
         worldId: 'world_1',
-        role: ItemWorldRole.CREATOR,
+        key: 'role',
+        value: ItemWorldRole.CREATOR,
       });
 
       expect(itemWorld).toBeDefined();
       expect(itemWorld.id).toBeDefined();
-      expect(itemWorld.role).toBe(ItemWorldRole.CREATOR);
+      expect(itemWorld.key).toBe('role');
+      expect(itemWorld.value).toBe(ItemWorldRole.CREATOR);
     });
 
     it('当缺少itemId时应该抛出错误', () => {
       expect(() => createItemWorld({
         worldId: 'world_1',
-        role: ItemWorldRole.CREATOR,
+        key: 'role',
+        value: ItemWorldRole.CREATOR,
       } as any)).toThrow('Invalid ItemWorld: itemId is required and must be a string');
     });
 
     it('当缺少worldId时应该抛出错误', () => {
       expect(() => createItemWorld({
         itemId: 'item_1',
-        role: ItemWorldRole.CREATOR,
+        key: 'role',
+        value: ItemWorldRole.CREATOR,
       } as any)).toThrow('Invalid ItemWorld: worldId is required and must be a string');
     });
 
-    it('当缺少role时应该抛出错误', () => {
+    it('当缺少key时应该抛出错误', () => {
       expect(() => createItemWorld({
         itemId: 'item_1',
         worldId: 'world_1',
-      } as any)).toThrow('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
+        value: ItemWorldRole.CREATOR,
+      } as any)).toThrow('Invalid ItemWorld: key is required and must be role, startAt or endAt');
     });
 
-    it('当role无效时应该抛出错误', () => {
+    it('当role值无效时应该抛出错误', () => {
       expect(() => createItemWorld({
         itemId: 'item_1',
         worldId: 'world_1',
-        role: 'invalid_role',
-      } as any)).toThrow('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
+        key: 'role',
+        value: 'invalid_role',
+      } as any)).toThrow('Invalid ItemWorld: role value must be a valid ItemWorldRole');
     });
   });
 
@@ -51,52 +58,28 @@ describe('ItemWorld', () => {
         id: 'iw_123',
         itemId: 'item_1',
         worldId: 'world_1',
-        role: ItemWorldRole.CREATOR,
+        key: 'role',
+        value: ItemWorldRole.CREATOR,
       };
 
       const itemWorld = fromItemWorld(itemWorldData);
-      expect(itemWorld.role).toBe(ItemWorldRole.CREATOR);
+      expect(itemWorld.key).toBe('role');
+      expect(itemWorld.value).toBe(ItemWorldRole.CREATOR);
     });
 
     it('当缺少id时应该抛出错误', () => {
       expect(() => fromItemWorld({
         itemId: 'item_1',
         worldId: 'world_1',
-        role: ItemWorldRole.CREATOR,
+        key: 'role',
+        value: ItemWorldRole.CREATOR,
       })).toThrow('Invalid ItemWorld: id is required and must be a string');
     });
 
-    it('当缺少itemId时应该抛出错误', () => {
-      expect(() => fromItemWorld({
-        id: 'iw_123',
-        worldId: 'world_1',
-        role: ItemWorldRole.CREATOR,
-      })).toThrow('Invalid ItemWorld: itemId is required and must be a string');
-    });
-
-    it('当缺少worldId时应该抛出错误', () => {
-      expect(() => fromItemWorld({
-        id: 'iw_123',
-        itemId: 'item_1',
-        role: ItemWorldRole.CREATOR,
-      })).toThrow('Invalid ItemWorld: worldId is required and must be a string');
-    });
-
-    it('当缺少role时应该抛出错误', () => {
-      expect(() => fromItemWorld({
-        id: 'iw_123',
-        itemId: 'item_1',
-        worldId: 'world_1',
-      })).toThrow('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
-    });
-
-    it('当role无效时应该抛出错误', () => {
-      expect(() => fromItemWorld({
-        id: 'iw_123',
-        itemId: 'item_1',
-        worldId: 'world_1',
-        role: 'invalid_role',
-      })).toThrow('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
+    it('当缺少必要字段时应该抛出错误', () => {
+      expect(() => fromItemWorld({ id: '1' })).toThrow('Invalid ItemWorld: itemId is required and must be a string');
+      expect(() => fromItemWorld({ id: '1', itemId: 'i1' })).toThrow('Invalid ItemWorld: worldId is required and must be a string');
+      expect(() => fromItemWorld({ id: '1', itemId: 'i1', worldId: 'w1' })).toThrow('Invalid ItemWorld: key is required and must be role, startAt or endAt');
     });
   });
 });

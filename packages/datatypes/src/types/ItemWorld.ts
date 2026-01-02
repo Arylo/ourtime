@@ -12,15 +12,19 @@ export enum ItemWorldRole {
 }
 
 /**
+ * ItemWorldKey - 物品与世界关系的键
+ */
+export type ItemWorldKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * ItemWorld - 表示物品与世界之间的关系
  */
 export interface ItemWorld {
   id: string;
   itemId: Item['id'];
   worldId: World['id'];
-  role: ItemWorldRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: ItemWorldKey;
+  value: ItemWorldRole | StoryDate;
 }
 
 /**
@@ -29,18 +33,28 @@ export interface ItemWorld {
 export function createItemWorld(data: {
   itemId: Item['id'];
   worldId: World['id'];
-  role: ItemWorldRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): ItemWorld;
+export function createItemWorld(data: {
+  itemId: Item['id'];
+  worldId: World['id'];
+  key: 'role';
+  value: ItemWorldRole;
+}): ItemWorld;
+export function createItemWorld(data: {
+  itemId: Item['id'];
+  worldId: World['id'];
+  key: ItemWorldKey;
+  value: ItemWorldRole | StoryDate;
 }): ItemWorld {
   validateItemWorld(data);
   return {
     id: ulid(),
     itemId: data.itemId,
     worldId: data.worldId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -51,16 +65,25 @@ export function fromItemWorld(data: Record<string, any>): ItemWorld {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemWorld: id is required and must be a string');
   }
-  validateItemWorld(data);
 
-  return {
+  const key = data.key as ItemWorldKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     itemId: data.itemId,
     worldId: data.worldId,
-    role: data.role as ItemWorldRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateItemWorld(result);
+
+  return result;
 }
 
 function validateItemWorld(data: Record<string, any>) {
@@ -70,8 +93,15 @@ function validateItemWorld(data: Record<string, any>) {
   if (!data.worldId || typeof data.worldId !== 'string') {
     throw new Error('Invalid ItemWorld: worldId is required and must be a string');
   }
-  if (!data.role || !Object.values(ItemWorldRole).includes(data.role as ItemWorldRole)) {
-    throw new Error('Invalid ItemWorld: role is required and must be a valid ItemWorldRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid ItemWorld: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid ItemWorld: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(ItemWorldRole).includes(data.value as ItemWorldRole)) {
+    throw new Error('Invalid ItemWorld: role value must be a valid ItemWorldRole');
   }
   return true;
 }

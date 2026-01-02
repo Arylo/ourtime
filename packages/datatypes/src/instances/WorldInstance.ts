@@ -58,14 +58,15 @@ export class WorldInstance {
 
     // 先移除已有的 owner 关系
     this.story.map.worldWho = this.story.map.worldWho
-      .filter(ww => !(ww.worldId === this.id && ww.role === WorldWhoRole.OWNER));
+      .filter(ww => !(ww.worldId === this.id && ww.key === 'role' && ww.value === WorldWhoRole.OWNER));
 
     // 添加新的 owner 关系
     whoIds.forEach(whoId => {
       const worldWho = createWorldWho({
         worldId: this.id,
         whoId,
-        role: WorldWhoRole.OWNER,
+        key: 'role',
+        value: WorldWhoRole.OWNER,
       });
       this.story.map.worldWho.push(worldWho);
     });

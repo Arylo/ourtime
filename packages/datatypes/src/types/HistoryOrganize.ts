@@ -13,15 +13,19 @@ export enum HistoryOrganizeRole {
 }
 
 /**
+ * HistoryOrganizeKey - 事件与组织关系的键
+ */
+export type HistoryOrganizeKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * HistoryOrganize - 表示事件与组织之间的关系
  */
 export interface HistoryOrganize {
   id: string;
   historyId: History['id'];
   organizeId: Organize['id'];
-  role: HistoryOrganizeRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: HistoryOrganizeKey;
+  value: HistoryOrganizeRole | StoryDate;
 }
 
 /**
@@ -30,18 +34,28 @@ export interface HistoryOrganize {
 export function createHistoryOrganize(data: {
   historyId: History['id'];
   organizeId: Organize['id'];
-  role: HistoryOrganizeRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): HistoryOrganize;
+export function createHistoryOrganize(data: {
+  historyId: History['id'];
+  organizeId: Organize['id'];
+  key: 'role';
+  value: HistoryOrganizeRole;
+}): HistoryOrganize;
+export function createHistoryOrganize(data: {
+  historyId: History['id'];
+  organizeId: Organize['id'];
+  key: HistoryOrganizeKey;
+  value: HistoryOrganizeRole | StoryDate;
 }): HistoryOrganize {
   validateHistoryOrganize(data);
   return {
     id: ulid(),
     historyId: data.historyId,
     organizeId: data.organizeId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -52,16 +66,25 @@ export function fromHistoryOrganize(data: Record<string, any>): HistoryOrganize 
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryOrganize: id is required and must be a string');
   }
-  validateHistoryOrganize(data);
 
-  return {
+  const key = data.key as HistoryOrganizeKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     historyId: data.historyId,
     organizeId: data.organizeId,
-    role: data.role as HistoryOrganizeRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateHistoryOrganize(result);
+
+  return result;
 }
 
 function validateHistoryOrganize(data: Record<string, any>) {
@@ -71,8 +94,15 @@ function validateHistoryOrganize(data: Record<string, any>) {
   if (!data.organizeId || typeof data.organizeId !== 'string') {
     throw new Error('Invalid HistoryOrganize: organizeId is required and must be a string');
   }
-  if (!data.role || !Object.values(HistoryOrganizeRole).includes(data.role as HistoryOrganizeRole)) {
-    throw new Error('Invalid HistoryOrganize: role is required and must be a valid HistoryOrganizeRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid HistoryOrganize: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid HistoryOrganize: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(HistoryOrganizeRole).includes(data.value as HistoryOrganizeRole)) {
+    throw new Error('Invalid HistoryOrganize: role value must be a valid HistoryOrganizeRole');
   }
   return true;
 }

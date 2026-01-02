@@ -80,7 +80,8 @@ export class HistoryInstance {
     this.story.map.historyTimeline.push(createHistoryTimeline({
       historyId: this.id,
       timelineId: timelineId,
-      role: HistoryTimelineRole.OCCURRED_IN,
+      key: 'role',
+      value: HistoryTimelineRole.OCCURRED_IN,
     }));
 
     return this

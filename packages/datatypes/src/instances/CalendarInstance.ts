@@ -87,7 +87,6 @@ export class CalendarInstance {
   }
 
   public toDateNumber (year?: number, month?: number, day?: number) {
-    console.log('toDateNumber:', year, month, day);
     const [_year, _month, _day] = [year, month, day].map(v => v ?? 0);
     return this.year(_year) + this.month(_month) + this.day(_day) + (_year >= 0 ? 0 : -1);
   }

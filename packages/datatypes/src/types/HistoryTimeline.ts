@@ -1,5 +1,4 @@
 import { ulid } from 'ulid';
-import { StoryDate, fromStoryDate } from './StoryDate';
 import type { History } from './History';
 import type { Timeline } from './Timeline';
 
@@ -11,13 +10,19 @@ export enum HistoryTimelineRole {
 }
 
 /**
+ * HistoryTimelineKey - 事件与时间轴关系的键
+ */
+export type HistoryTimelineKey = 'role';
+
+/**
  * HistoryTimeline - 表示事件与时间轴之间的关系
  */
 export interface HistoryTimeline {
   id: string;
   historyId: History['id'];
   timelineId: Timeline['id'];
-  role: HistoryTimelineRole;
+  key: HistoryTimelineKey;
+  value: HistoryTimelineRole;
 }
 
 /**
@@ -26,14 +31,16 @@ export interface HistoryTimeline {
 export function createHistoryTimeline(data: {
   historyId: History['id'];
   timelineId: Timeline['id'];
-  role: HistoryTimelineRole;
+  key: HistoryTimelineKey;
+  value: HistoryTimelineRole;
 }): HistoryTimeline {
   validateHistoryTimeline(data);
   return {
     id: ulid(),
     historyId: data.historyId,
     timelineId: data.timelineId,
-    role: data.role,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -44,14 +51,21 @@ export function fromHistoryTimeline(data: Record<string, any>): HistoryTimeline 
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryTimeline: id is required and must be a string');
   }
-  validateHistoryTimeline(data);
 
-  return {
+  const key = data.key as HistoryTimelineKey;
+  const value = data.value as HistoryTimelineRole;
+
+  const result = {
     id: data.id,
     historyId: data.historyId,
     timelineId: data.timelineId,
-    role: data.role as HistoryTimelineRole,
+    key,
+    value,
   };
+
+  validateHistoryTimeline(result);
+
+  return result;
 }
 
 function validateHistoryTimeline(data: Record<string, any>) {
@@ -61,8 +75,11 @@ function validateHistoryTimeline(data: Record<string, any>) {
   if (!data.timelineId || typeof data.timelineId !== 'string') {
     throw new Error('Invalid HistoryTimeline: timelineId is required and must be a string');
   }
-  if (!data.role || !Object.values(HistoryTimelineRole).includes(data.role as HistoryTimelineRole)) {
-    throw new Error('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
+  if (!data.key || data.key !== 'role') {
+    throw new Error('Invalid HistoryTimeline: key is required and must be role');
+  }
+  if (!data.value || !Object.values(HistoryTimelineRole).includes(data.value as HistoryTimelineRole)) {
+    throw new Error('Invalid HistoryTimeline: value is required and must be a valid HistoryTimelineRole');
   }
   return true;
 }

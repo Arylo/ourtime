@@ -12,15 +12,19 @@ export enum ItemPlaceRole {
 }
 
 /**
+ * ItemPlaceKey - 物品与地点关系的键
+ */
+export type ItemPlaceKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * ItemPlace - 表示物品与地点之间的关系
  */
 export interface ItemPlace {
   id: string;
   itemId: Item['id'];
   placeId: Place['id'];
-  role: ItemPlaceRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: ItemPlaceKey;
+  value: ItemPlaceRole | StoryDate;
 }
 
 /**
@@ -29,18 +33,28 @@ export interface ItemPlace {
 export function createItemPlace(data: {
   itemId: Item['id'];
   placeId: Place['id'];
-  role: ItemPlaceRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): ItemPlace;
+export function createItemPlace(data: {
+  itemId: Item['id'];
+  placeId: Place['id'];
+  key: 'role';
+  value: ItemPlaceRole;
+}): ItemPlace;
+export function createItemPlace(data: {
+  itemId: Item['id'];
+  placeId: Place['id'];
+  key: ItemPlaceKey;
+  value: ItemPlaceRole | StoryDate;
 }): ItemPlace {
   validateItemPlace(data);
   return {
     id: ulid(),
     itemId: data.itemId,
     placeId: data.placeId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -51,16 +65,25 @@ export function fromItemPlace(data: Record<string, any>): ItemPlace {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid ItemPlace: id is required and must be a string');
   }
-  validateItemPlace(data);
 
-  return {
+  const key = data.key as ItemPlaceKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     itemId: data.itemId,
     placeId: data.placeId,
-    role: data.role as ItemPlaceRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateItemPlace(result);
+
+  return result;
 }
 
 function validateItemPlace(data: Record<string, any>) {
@@ -70,8 +93,15 @@ function validateItemPlace(data: Record<string, any>) {
   if (!data.placeId || typeof data.placeId !== 'string') {
     throw new Error('Invalid ItemPlace: placeId is required and must be a string');
   }
-  if (!data.role || !Object.values(ItemPlaceRole).includes(data.role as ItemPlaceRole)) {
-    throw new Error('Invalid ItemPlace: role is required and must be a valid ItemPlaceRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid ItemPlace: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid ItemPlace: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(ItemPlaceRole).includes(data.value as ItemPlaceRole)) {
+    throw new Error('Invalid ItemPlace: role value must be a valid ItemPlaceRole');
   }
   return true;
 }

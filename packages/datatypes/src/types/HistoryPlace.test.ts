@@ -3,45 +3,51 @@ import { createHistoryPlace, fromHistoryPlace, HistoryPlaceRole } from './Histor
 
 describe('HistoryPlace', () => {
   describe('createHistoryPlace', () => {
-    it('应该创建一个带有ULID的HistoryPlace对象', () => {
+    it('应该创建一个带有ULID加key-value的HistoryPlace对象', () => {
       const eventPlace = createHistoryPlace({
         historyId: 'history_1',
         placeId: 'place_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryPlaceRole.OCCURRED_IN,
       });
 
       expect(eventPlace).toBeDefined();
       expect(eventPlace.id).toBeDefined();
-      expect(eventPlace.role).toBe(HistoryPlaceRole.OCCURRED_IN);
+      expect(eventPlace.key).toBe('role');
+      expect(eventPlace.value).toBe(HistoryPlaceRole.OCCURRED_IN);
     });
 
     it('当缺少historyId时应该抛出错误', () => {
       expect(() => createHistoryPlace({
         placeId: 'place_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryPlaceRole.OCCURRED_IN,
       } as any)).toThrow('Invalid HistoryPlace: historyId is required and must be a string');
     });
 
     it('当缺少placeId时应该抛出错误', () => {
       expect(() => createHistoryPlace({
         historyId: 'history_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryPlaceRole.OCCURRED_IN,
       } as any)).toThrow('Invalid HistoryPlace: placeId is required and must be a string');
     });
 
-    it('当缺少role时应该抛出错误', () => {
+    it('当缺少key时应该抛出错误', () => {
       expect(() => createHistoryPlace({
         historyId: 'history_1',
         placeId: 'place_1',
-      } as any)).toThrow('Invalid HistoryPlace: role is required and must be a valid HistoryPlaceRole');
+        value: HistoryPlaceRole.OCCURRED_IN,
+      } as any)).toThrow('Invalid HistoryPlace: key is required and must be role, startAt or endAt');
     });
 
-    it('当role无效时应该抛出错误', () => {
+    it('当role值无效时应该抛出错误', () => {
       expect(() => createHistoryPlace({
         historyId: 'history_1',
         placeId: 'place_1',
-        role: 'invalid_role',
-      } as any)).toThrow('Invalid HistoryPlace: role is required and must be a valid HistoryPlaceRole');
+        key: 'role',
+        value: 'invalid_role',
+      } as any)).toThrow('Invalid HistoryPlace: role value must be a valid HistoryPlaceRole');
     });
   });
 
@@ -51,52 +57,28 @@ describe('HistoryPlace', () => {
         id: 'ep_123',
         historyId: 'history_1',
         placeId: 'place_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryPlaceRole.OCCURRED_IN,
       };
 
       const eventPlace = fromHistoryPlace(eventPlaceData);
-      expect(eventPlace.role).toBe(HistoryPlaceRole.OCCURRED_IN);
+      expect(eventPlace.key).toBe('role');
+      expect(eventPlace.value).toBe(HistoryPlaceRole.OCCURRED_IN);
     });
 
     it('当缺少id时应该抛出错误', () => {
       expect(() => fromHistoryPlace({
         historyId: 'history_1',
         placeId: 'place_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryPlaceRole.OCCURRED_IN,
       })).toThrow('Invalid HistoryPlace: id is required and must be a string');
     });
 
-    it('当缺少historyId时应该抛出错误', () => {
-      expect(() => fromHistoryPlace({
-        id: 'ep_123',
-        placeId: 'place_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
-      })).toThrow('Invalid HistoryPlace: historyId is required and must be a string');
-    });
-
-    it('当缺少placeId时应该抛出错误', () => {
-      expect(() => fromHistoryPlace({
-        id: 'ep_123',
-        historyId: 'history_1',
-        role: HistoryPlaceRole.OCCURRED_IN,
-      })).toThrow('Invalid HistoryPlace: placeId is required and must be a string');
-    });
-
-    it('当缺少role时应该抛出错误', () => {
-      expect(() => fromHistoryPlace({
-        id: 'ep_123',
-        historyId: 'history_1',
-        placeId: 'place_1',
-      })).toThrow('Invalid HistoryPlace: role is required and must be a valid HistoryPlaceRole');
-    });
-
-    it('当role无效时应该抛出错误', () => {
-      expect(() => fromHistoryPlace({
-        id: 'ep_123',
-        historyId: 'history_1',
-        placeId: 'place_1',
-        role: 'invalid_role',
-      })).toThrow('Invalid HistoryPlace: role is required and must be a valid HistoryPlaceRole');
+    it('当缺少必要字段时应该抛出错误', () => {
+      expect(() => fromHistoryPlace({ id: '1' })).toThrow('Invalid HistoryPlace: historyId is required and must be a string');
+      expect(() => fromHistoryPlace({ id: '1', historyId: 'h1' })).toThrow('Invalid HistoryPlace: placeId is required and must be a string');
+      expect(() => fromHistoryPlace({ id: '1', historyId: 'h1', placeId: 'p1' })).toThrow('Invalid HistoryPlace: key is required and must be role, startAt or endAt');
     });
   });
 });

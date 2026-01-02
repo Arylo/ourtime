@@ -7,41 +7,47 @@ describe('HistoryTimeline', () => {
       const eventTimeline = createHistoryTimeline({
         historyId: 'history_1',
         timelineId: 'timeline_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryTimelineRole.OCCURRED_IN,
       });
 
       expect(eventTimeline).toBeDefined();
       expect(eventTimeline.id).toBeDefined();
-      expect(eventTimeline.role).toBe(HistoryTimelineRole.OCCURRED_IN);
+      expect(eventTimeline.key).toBe('role');
+      expect(eventTimeline.value).toBe(HistoryTimelineRole.OCCURRED_IN);
     });
 
     it('当缺少historyId时应该抛出错误', () => {
       expect(() => createHistoryTimeline({
         timelineId: 'timeline_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryTimelineRole.OCCURRED_IN,
       } as any)).toThrow('Invalid HistoryTimeline: historyId is required and must be a string');
     });
 
     it('当缺少timelineId时应该抛出错误', () => {
       expect(() => createHistoryTimeline({
         historyId: 'history_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryTimelineRole.OCCURRED_IN,
       } as any)).toThrow('Invalid HistoryTimeline: timelineId is required and must be a string');
     });
 
-    it('当缺少role时应该抛出错误', () => {
+    it('当缺少key时应该抛出错误', () => {
       expect(() => createHistoryTimeline({
         historyId: 'history_1',
         timelineId: 'timeline_1',
-      } as any)).toThrow('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
+        value: HistoryTimelineRole.OCCURRED_IN,
+      } as any)).toThrow('Invalid HistoryTimeline: key is required and must be role');
     });
 
-    it('当role无效时应该抛出错误', () => {
+    it('当value无效时应该抛出错误', () => {
       expect(() => createHistoryTimeline({
         historyId: 'history_1',
         timelineId: 'timeline_1',
-        role: 'invalid_role',
-      } as any)).toThrow('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
+        key: 'role',
+        value: 'invalid_role' as any,
+      } as any)).toThrow('Invalid HistoryTimeline: value is required and must be a valid HistoryTimelineRole');
     });
   });
 
@@ -51,52 +57,28 @@ describe('HistoryTimeline', () => {
         id: 'et_123',
         historyId: 'history_1',
         timelineId: 'timeline_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryTimelineRole.OCCURRED_IN,
       };
 
       const eventTimeline = fromHistoryTimeline(eventTimelineData);
-      expect(eventTimeline.role).toBe(HistoryTimelineRole.OCCURRED_IN);
+      expect(eventTimeline.key).toBe('role');
+      expect(eventTimeline.value).toBe(HistoryTimelineRole.OCCURRED_IN);
     });
 
     it('当缺少id时应该抛出错误', () => {
       expect(() => fromHistoryTimeline({
         historyId: 'history_1',
         timelineId: 'timeline_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
+        key: 'role',
+        value: HistoryTimelineRole.OCCURRED_IN,
       })).toThrow('Invalid HistoryTimeline: id is required and must be a string');
     });
 
-    it('当缺少historyId时应该抛出错误', () => {
-      expect(() => fromHistoryTimeline({
-        id: 'et_123',
-        timelineId: 'timeline_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
-      })).toThrow('Invalid HistoryTimeline: historyId is required and must be a string');
-    });
-
-    it('当缺少timelineId时应该抛出错误', () => {
-      expect(() => fromHistoryTimeline({
-        id: 'et_123',
-        historyId: 'history_1',
-        role: HistoryTimelineRole.OCCURRED_IN,
-      })).toThrow('Invalid HistoryTimeline: timelineId is required and must be a string');
-    });
-
-    it('当缺少role时应该抛出错误', () => {
-      expect(() => fromHistoryTimeline({
-        id: 'et_123',
-        historyId: 'history_1',
-        timelineId: 'timeline_1',
-      })).toThrow('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
-    });
-
-    it('当role无效时应该抛出错误', () => {
-      expect(() => fromHistoryTimeline({
-        id: 'et_123',
-        historyId: 'history_1',
-        timelineId: 'timeline_1',
-        role: 'invalid_role',
-      })).toThrow('Invalid HistoryTimeline: role is required and must be a valid HistoryTimelineRole');
+    it('当缺少必要字段时应该抛出错误', () => {
+      expect(() => fromHistoryTimeline({ id: '1' })).toThrow('Invalid HistoryTimeline: historyId is required and must be a string');
+      expect(() => fromHistoryTimeline({ id: '1', historyId: 'h1' })).toThrow('Invalid HistoryTimeline: timelineId is required and must be a string');
+      expect(() => fromHistoryTimeline({ id: '1', historyId: 'h1', timelineId: 't1' })).toThrow('Invalid HistoryTimeline: key is required and must be role');
     });
   });
 });

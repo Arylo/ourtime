@@ -12,46 +12,49 @@ export enum WorldWhoRole {
 }
 
 /**
+ * WorldWhoKey - 世界与人物关系的键
+ */
+export type WorldWhoKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * WorldWho - 表示世界与人物之间的关系（如主人、守护者等）
  */
 export interface WorldWho {
   id: string;
   worldId: World['id'];
   whoId: Who['id'];
-  role: WorldWhoRole; // Made required
-  startAt?: StoryDate;
-  endAt?: StoryDate;
-}
-
-/**
- * 验证 WorldWho 的 role 字段
- */
-function validateWorldWho(data: Record<string, any>) {
-  if (!data.worldId || typeof data.worldId !== 'string') {
-    throw new Error('Invalid WorldWho: worldId is required and must be a string');
-  }
-  if (!data.whoId || typeof data.whoId !== 'string') {
-    throw new Error('Invalid WorldWho: whoId is required and must be a string');
-  }
-  if (!data.role || !Object.values(WorldWhoRole).includes(data.role as WorldWhoRole)) {
-    throw new Error('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
-  }
-  return true;
+  key: WorldWhoKey;
+  value: WorldWhoRole | StoryDate;
 }
 
 /**
  * 创建一个新的 WorldWho 对象
  */
-export function createWorldWho(data: Omit<WorldWho, 'id'>): WorldWho {
+export function createWorldWho(data: {
+  worldId: World['id'];
+  whoId: Who['id'];
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): WorldWho;
+export function createWorldWho(data: {
+  worldId: World['id'];
+  whoId: Who['id'];
+  key: 'role';
+  value: WorldWhoRole;
+}): WorldWho;
+export function createWorldWho(data: {
+  worldId: World['id'];
+  whoId: Who['id'];
+  key: WorldWhoKey;
+  value: WorldWhoRole | StoryDate;
+}): WorldWho {
   validateWorldWho(data);
-
   return {
     id: ulid(),
     worldId: data.worldId,
     whoId: data.whoId,
-    role: data.role, // Ensure role is passed
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -62,14 +65,43 @@ export function fromWorldWho(data: Record<string, any>): WorldWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid WorldWho: id is required and must be a string');
   }
-  validateWorldWho(data);
 
-  return {
+  const key = data.key as WorldWhoKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     worldId: data.worldId,
     whoId: data.whoId,
-    role: data.role as WorldWhoRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateWorldWho(result);
+
+  return result;
+}
+
+function validateWorldWho(data: Record<string, any>) {
+  if (!data.worldId || typeof data.worldId !== 'string') {
+    throw new Error('Invalid WorldWho: worldId is required and must be a string');
+  }
+  if (!data.whoId || typeof data.whoId !== 'string') {
+    throw new Error('Invalid WorldWho: whoId is required and must be a string');
+  }
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid WorldWho: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid WorldWho: value is required');
+  }
+
+  if (data.key === 'role' && !Object.values(WorldWhoRole).includes(data.value as WorldWhoRole)) {
+    throw new Error('Invalid WorldWho: role value must be a valid WorldWhoRole');
+  }
+  return true;
 }

@@ -8,7 +8,8 @@ describe('WorldWho', () => {
       const worldWho = createWorldWho({
         worldId: 'world_123',
         whoId: 'who_123',
-        role: WorldWhoRole.OWNER,
+        key: 'role',
+        value: WorldWhoRole.OWNER,
       });
 
       expect(worldWho).toBeDefined();
@@ -16,30 +17,39 @@ describe('WorldWho', () => {
       expect(worldWho.id.length).toBeGreaterThan(0);
       expect(worldWho.worldId).toBe('world_123');
       expect(worldWho.whoId).toBe('who_123');
-      expect(worldWho.role).toBe(WorldWhoRole.OWNER);
+      expect(worldWho.key).toBe('role');
+      expect(worldWho.value).toBe(WorldWhoRole.OWNER);
     });
 
     it('应该创建带有时间范围的WorldWho对象', () => {
-      const startAt = createStoryDate({   rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({   rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
+      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
       const worldWho = createWorldWho({
         worldId: 'world_123',
         whoId: 'who_123',
-        role: WorldWhoRole.OWNER,
-        startAt,
-        endAt,
+        key: 'startAt',
+        value: startAt,
       });
 
-      expect(worldWho.startAt).toEqual(startAt);
-      expect(worldWho.endAt).toEqual(endAt);
+      expect(worldWho.key).toBe('startAt');
+      expect(worldWho.value).toEqual(startAt);
     });
 
-    it('当role无效时应该抛出错误', () => {
+    it('当key无效时应该抛出错误', () => {
       expect(() => createWorldWho({
         worldId: 'world_123',
         whoId: 'who_123',
-        role: 'invalid_role' as any,
-      })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
+        key: 'invalid_key' as any,
+        value: WorldWhoRole.OWNER,
+      })).toThrow('Invalid WorldWho: key is required and must be role, startAt or endAt');
+    });
+
+    it('当role值无效时应该抛出错误', () => {
+      expect(() => createWorldWho({
+        worldId: 'world_123',
+        whoId: 'who_123',
+        key: 'role',
+        value: 'invalid_role' as any,
+      })).toThrow('Invalid WorldWho: role value must be a valid WorldWhoRole');
     });
   });
 
@@ -49,7 +59,8 @@ describe('WorldWho', () => {
         id: 'ww_123',
         worldId: 'world_123',
         whoId: 'who_123',
-        role: WorldWhoRole.OWNER,
+        key: 'role',
+        value: WorldWhoRole.OWNER,
       };
 
       const worldWho = fromWorldWho(worldWhoData);
@@ -58,22 +69,14 @@ describe('WorldWho', () => {
       expect(worldWho.id).toBe('ww_123');
       expect(worldWho.worldId).toBe('world_123');
       expect(worldWho.whoId).toBe('who_123');
-      expect(worldWho.role).toBe(WorldWhoRole.OWNER);
+      expect(worldWho.key).toBe('role');
+      expect(worldWho.value).toBe(WorldWhoRole.OWNER);
     });
 
     it('当缺少必要字段时应该抛出错误', () => {
       expect(() => fromWorldWho({ id: '1' })).toThrow('Invalid WorldWho: worldId is required and must be a string');
       expect(() => fromWorldWho({ id: '1', worldId: 'w1' })).toThrow('Invalid WorldWho: whoId is required and must be a string');
-      expect(() => fromWorldWho({ id: '1', worldId: 'w1', whoId: 'h1' })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
-    });
-
-    it('当role无效时应该抛出错误', () => {
-      expect(() => fromWorldWho({
-        id: '1',
-        worldId: 'w1',
-        whoId: 'h1',
-        role: 'invalid_role'
-      })).toThrow('Invalid WorldWho: role is required and must be a valid WorldWhoRole');
+      expect(() => fromWorldWho({ id: '1', worldId: 'w1', whoId: 'h1' })).toThrow('Invalid WorldWho: key is required and must be role, startAt or endAt');
     });
   });
 });
