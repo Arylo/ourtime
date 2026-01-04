@@ -1,5 +1,4 @@
 import { ulid } from 'ulid';
-import { StoryDate, fromStoryDate } from './StoryDate';
 
 /**
  * History - 表示一个事件
@@ -8,8 +7,6 @@ export interface History {
   id: string;
   name: string;
   alias?: string[];
-  startAt?: StoryDate;
-  endAt?: StoryDate;
   parentEvent?: History['id'];
 }
 
@@ -19,16 +16,12 @@ export interface History {
 export function createHistory(data: {
   name: string;
   alias?: string[];
-  startAt?: StoryDate;
-  endAt?: StoryDate;
   parentEvent?: History['id'];
 }): History {
   return {
     id: ulid(),
     name: data.name,
     alias: data.alias,
-    startAt: data.startAt,
-    endAt: data.endAt,
     parentEvent: data.parentEvent,
   };
 }
@@ -58,8 +51,6 @@ export function fromHistory(data: Record<string, any>): History {
     id: data.id,
     name: data.name,
     alias: data.alias,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     parentEvent: data.parentEvent,
   };
 }

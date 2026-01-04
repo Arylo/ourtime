@@ -13,15 +13,19 @@ export enum HistoryWhoRole {
 }
 
 /**
+ * HistoryWhoKey - 事件与人物关系的键
+ */
+export type HistoryWhoKey = 'role' | 'startAt' | 'endAt';
+
+/**
  * HistoryWho - 表示事件与人物之间的关系
  */
 export interface HistoryWho {
   id: string;
   historyId: History['id'];
   whoId: Who['id'];
-  role: HistoryWhoRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: HistoryWhoKey;
+  value: HistoryWhoRole | StoryDate;
 }
 
 /**
@@ -30,18 +34,28 @@ export interface HistoryWho {
 export function createHistoryWho(data: {
   historyId: History['id'];
   whoId: Who['id'];
-  role: HistoryWhoRole;
-  startAt?: StoryDate;
-  endAt?: StoryDate;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): HistoryWho;
+export function createHistoryWho(data: {
+  historyId: History['id'];
+  whoId: Who['id'];
+  key: 'role';
+  value: HistoryWhoRole;
+}): HistoryWho;
+export function createHistoryWho(data: {
+  historyId: History['id'];
+  whoId: Who['id'];
+  key: HistoryWhoKey;
+  value: HistoryWhoRole | StoryDate;
 }): HistoryWho {
   validateHistoryWho(data);
   return {
     id: ulid(),
     historyId: data.historyId,
     whoId: data.whoId,
-    role: data.role,
-    startAt: data.startAt,
-    endAt: data.endAt,
+    key: data.key,
+    value: data.value,
   };
 }
 
@@ -52,16 +66,25 @@ export function fromHistoryWho(data: Record<string, any>): HistoryWho {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid HistoryWho: id is required and must be a string');
   }
-  validateHistoryWho(data);
 
-  return {
+  const key = data.key as HistoryWhoKey;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
+
+  const result = {
     id: data.id,
     historyId: data.historyId,
     whoId: data.whoId,
-    role: data.role as HistoryWhoRole,
-    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
-    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
+    key,
+    value,
   };
+
+  validateHistoryWho(result);
+
+  return result;
 }
 
 function validateHistoryWho(data: Record<string, any>) {
@@ -71,8 +94,11 @@ function validateHistoryWho(data: Record<string, any>) {
   if (!data.whoId || typeof data.whoId !== 'string') {
     throw new Error('Invalid HistoryWho: whoId is required and must be a string');
   }
-  if (!data.role || !Object.values(HistoryWhoRole).includes(data.role as HistoryWhoRole)) {
-    throw new Error('Invalid HistoryWho: role is required and must be a valid HistoryWhoRole');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid HistoryWho: key is required and must be role, startAt or endAt');
+  }
+  if (data.value === undefined) {
+    throw new Error('Invalid HistoryWho: value is required');
   }
   return true;
 }

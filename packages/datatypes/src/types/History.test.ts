@@ -5,13 +5,9 @@ import { createStoryDate } from './StoryDate';
 describe('History', () => {
   describe('createHistory', () => {
     it('应该创建一个带有ULID的History对象', () => {
-      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const event = createHistory({
         name: '测试事件',
         alias: ['别名1', '别名2'],
-        startAt,
-        endAt,
         parentEvent: 'parent_event_123',
       });
 
@@ -20,8 +16,6 @@ describe('History', () => {
       expect(event.id.length).toBeGreaterThan(0);
       expect(event.name).toBe('测试事件');
       expect(event.alias).toEqual(['别名1', '别名2']);
-      expect(event.startAt).toEqual(startAt);
-      expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
     });
 
@@ -42,22 +36,16 @@ describe('History', () => {
       expect(event.id).toBeDefined();
       expect(event.name).toBe('测试事件');
       expect(event.alias).toBeUndefined();
-      expect(event.startAt).toBeUndefined();
-      expect(event.endAt).toBeUndefined();
       expect(event.parentEvent).toBeUndefined();
     });
   });
 
   describe('fromHistory', () => {
     it('应该从对象创建History对象', () => {
-      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const eventData = {
         id: 'event_123',
         name: '测试事件',
         alias: ['别名1', '别名2'],
-        startAt,
-        endAt,
         parentEvent: 'parent_event_123',
       };
 
@@ -67,8 +55,6 @@ describe('History', () => {
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
       expect(event.alias).toEqual(['别名1', '别名2']);
-      expect(event.startAt).toEqual(startAt);
-      expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
     });
 
@@ -84,8 +70,6 @@ describe('History', () => {
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
       expect(event.alias).toBeUndefined();
-      expect(event.startAt).toBeUndefined();
-      expect(event.endAt).toBeUndefined();
       expect(event.parentEvent).toBeUndefined();
     });
 
@@ -128,50 +112,36 @@ describe('History', () => {
 
   describe('History接口', () => {
     it('应该符合History接口定义', () => {
-      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const event: History = {
         id: 'event_123',
         name: '测试事件',
         alias: ['别名1', '别名2'],
-        startAt,
-        endAt,
         parentEvent: 'parent_event_123',
       };
 
       expect(event.id).toBe('event_123');
       expect(event.name).toBe('测试事件');
       expect(event.alias).toEqual(['别名1', '别名2']);
-      expect(event.startAt).toEqual(startAt);
-      expect(event.endAt).toEqual(endAt);
       expect(event.parentEvent).toBe('parent_event_123');
     });
 
-    it('应该支持可选的alias、startAt、endAt和parentEvent字段', () => {
+    it('应该支持可选的alias和parentEvent字段', () => {
       const eventWithoutOptional: History = {
         id: 'event_123',
         name: '测试事件',
       };
 
-      const startAt = createStoryDate({ rangeStart: 1000, rangeEnd: 1000, calendarId: 'test_calendar' });
-      const endAt = createStoryDate({ rangeStart: 2000, rangeEnd: 2000, calendarId: 'test_calendar' });
       const eventWithOptional: History = {
         id: 'event_456',
         name: '测试事件',
         alias: ['别名'],
-        startAt,
-        endAt,
         parentEvent: 'parent_event_123',
       };
 
       expect(eventWithoutOptional.alias).toBeUndefined();
-      expect(eventWithoutOptional.startAt).toBeUndefined();
-      expect(eventWithoutOptional.endAt).toBeUndefined();
       expect(eventWithoutOptional.parentEvent).toBeUndefined();
 
       expect(eventWithOptional.alias).toEqual(['别名']);
-      expect(eventWithOptional.startAt).toEqual(startAt);
-      expect(eventWithOptional.endAt).toEqual(endAt);
       expect(eventWithOptional.parentEvent).toBe('parent_event_123');
     });
   });

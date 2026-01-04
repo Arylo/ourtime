@@ -1,6 +1,7 @@
 import { ulid } from 'ulid';
 import type { History } from './History';
 import type { Timeline } from './Timeline';
+import { StoryDate, fromStoryDate } from './StoryDate';
 
 /**
  * HistoryTimelineRole - 事件与时间轴关系的角色枚举
@@ -12,7 +13,12 @@ export enum HistoryTimelineRole {
 /**
  * HistoryTimelineKey - 事件与时间轴关系的键
  */
-export type HistoryTimelineKey = 'role';
+export type HistoryTimelineKey = 'role' | 'startAt' | 'endAt';
+
+/**
+ * HistoryTimelineValue - 事件与时间轴关系的值
+ */
+export type HistoryTimelineValue = HistoryTimelineRole | StoryDate;
 
 /**
  * HistoryTimeline - 表示事件与时间轴之间的关系
@@ -22,7 +28,7 @@ export interface HistoryTimeline {
   historyId: History['id'];
   timelineId: Timeline['id'];
   key: HistoryTimelineKey;
-  value: HistoryTimelineRole;
+  value: HistoryTimelineValue;
 }
 
 /**
@@ -31,8 +37,20 @@ export interface HistoryTimeline {
 export function createHistoryTimeline(data: {
   historyId: History['id'];
   timelineId: Timeline['id'];
-  key: HistoryTimelineKey;
+  key: 'startAt' | 'endAt';
+  value: StoryDate;
+}): HistoryTimeline;
+export function createHistoryTimeline(data: {
+  historyId: History['id'];
+  timelineId: Timeline['id'];
+  key: 'role';
   value: HistoryTimelineRole;
+}): HistoryTimeline;
+export function createHistoryTimeline(data: {
+  historyId: History['id'];
+  timelineId: Timeline['id'];
+  key: HistoryTimelineKey;
+  value: HistoryTimelineValue;
 }): HistoryTimeline {
   validateHistoryTimeline(data);
   return {
@@ -53,7 +71,11 @@ export function fromHistoryTimeline(data: Record<string, any>): HistoryTimeline 
   }
 
   const key = data.key as HistoryTimelineKey;
-  const value = data.value as HistoryTimelineRole;
+  let value = data.value;
+
+  if (key === 'startAt' || key === 'endAt') {
+    value = fromStoryDate(data.value);
+  }
 
   const result = {
     id: data.id,
@@ -75,11 +97,17 @@ function validateHistoryTimeline(data: Record<string, any>) {
   if (!data.timelineId || typeof data.timelineId !== 'string') {
     throw new Error('Invalid HistoryTimeline: timelineId is required and must be a string');
   }
-  if (!data.key || data.key !== 'role') {
-    throw new Error('Invalid HistoryTimeline: key is required and must be role');
+  if (!data.key || !['role', 'startAt', 'endAt'].includes(data.key)) {
+    throw new Error('Invalid HistoryTimeline: key is required and must be role, startAt or endAt');
   }
-  if (!data.value || !Object.values(HistoryTimelineRole).includes(data.value as HistoryTimelineRole)) {
-    throw new Error('Invalid HistoryTimeline: value is required and must be a valid HistoryTimelineRole');
+  if (data.key === 'role') {
+    if (!data.value || !Object.values(HistoryTimelineRole).includes(data.value as HistoryTimelineRole)) {
+      throw new Error('Invalid HistoryTimeline: value must be a valid HistoryTimelineRole when key is role');
+    }
+  } else if (data.key === 'startAt' || data.key === 'endAt') {
+    if (!data.value || typeof data.value !== 'object') {
+      throw new Error(`Invalid HistoryTimeline: value must be a StoryDate when key is ${data.key}`);
+    }
   }
   return true;
 }

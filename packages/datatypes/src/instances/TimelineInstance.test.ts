@@ -18,4 +18,31 @@ describe("TimelineInstance", () => {
     const world: World = { id: "world1", name: "Test World" };
     expect(() => new TimelineInstance(story, world, "invalid_id")).toThrow();
   });
+
+  it("should append history without automatic association", () => {
+    const story = loadStory({ id: "story1", name: "Test Story", map: { timeline: [createTimeline({ name: "Test Timeline" })], worldTimeline: [], Histories: [], historyTimeline: [] } });
+    const world: World = { id: "world1", name: "Test World" };
+    const instance = new TimelineInstance(story.toObject(), world, story.map.timeline[0].id);
+
+    const history = story.appendHistory({ name: "Test Event" });
+    expect(history).toBeDefined();
+    expect(story.map.Histories.length).toBe(1);
+    // Should not be automatically associated
+    expect(story.map.historyTimeline.length).toBe(0);
+  });
+
+  it("should support manual association with role, startAt, and endAt", () => {
+    const story = loadStory({ id: "story1", name: "Test Story", map: { timeline: [createTimeline({ name: "Test Timeline" })], worldTimeline: [], Histories: [], historyTimeline: [] } });
+    const world: World = { id: "world1", name: "Test World" };
+    const instance = new TimelineInstance(story.toObject(), world, story.map.timeline[0].id);
+
+    const history = story.appendHistory({ name: "Test Event" });
+    const startAt = instance.genStoryDate({ rangeStart: 100, rangeEnd: 100, calendarId: 'c1' });
+
+    history.associateTimeline(instance.id, { startAt });
+
+    expect(story.map.historyTimeline.length).toBe(1);
+    expect(story.map.historyTimeline[0].key).toBe('startAt');
+    expect(story.map.historyTimeline[0].value).toEqual(startAt);
+  });
 });

@@ -8,8 +8,8 @@ export interface World {
   name: string;
   id: string;
   description?: string;
-  startAt: StoryDate;
-  endAt: StoryDate;
+  startAt?: StoryDate;
+  endAt?: StoryDate;
   parents?: World['id'][];
   /** 是否已出场，默认 false */
   appeared?: boolean;
@@ -33,8 +33,8 @@ export function createWorld(data: {
     id: ulid(),
     name: data.name,
     description: data.description,
-    startAt: data.startAt ?? createStoryDate({ isUnknown: true }),
-    endAt: data.endAt ?? createStoryDate({ isUnknown: true }),
+    startAt: data.startAt,
+    endAt: data.endAt,
     parents: data.parents,
     appeared: data.appeared ?? false,
     departed: data.departed ?? false,
@@ -51,18 +51,12 @@ export function fromWorld(data: Record<string, any>): World {
   if (!data.id || typeof data.id !== 'string') {
     throw new Error('Invalid World: id is required and must be a string');
   }
-  if (!data.startAt) {
-    throw new Error('Invalid World: startAt is required');
-  }
-  if (!data.endAt) {
-    throw new Error('Invalid World: endAt is required');
-  }
   return {
     name: data.name,
     id: data.id,
     description: data.description,
-    startAt: fromStoryDate(data.startAt),
-    endAt: fromStoryDate(data.endAt),
+    startAt: data.startAt ? fromStoryDate(data.startAt) : undefined,
+    endAt: data.endAt ? fromStoryDate(data.endAt) : undefined,
     parents: data.parents,
     appeared: !!data.appeared,
     departed: !!data.departed,

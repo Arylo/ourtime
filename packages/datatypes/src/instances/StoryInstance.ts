@@ -6,11 +6,13 @@ import { createCalendar } from '../types/Calendar';
 import { createWho } from '../types/Who';
 import { createItem } from '../types/Item';
 import { createOrganize } from '../types/Organize';
+import { createHistory } from '../types/History';
 import { loadWorld, newWorld } from './world';
 import { loadOrganize, newOrganize } from './organize';
 import { loadItem, newItem } from './item';
 import { loadWho, newWho } from './who';
 import { newCalendar } from './calendar';
+import { newHistory } from './history';
 
 export class StoryInstance {
   private story: Story;
@@ -119,5 +121,9 @@ export class StoryInstance {
 
   public appendWho(who: Parameters<typeof createWho>[0]) {
     return newWho(this.story, who);
+  }
+
+  public appendHistory(history: Parameters<typeof createHistory>[0]) {
+    return newHistory(this.story, history);
   }
 }

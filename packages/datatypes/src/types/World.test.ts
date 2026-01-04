@@ -29,8 +29,8 @@ describe('World', () => {
       expect(world).toBeDefined();
       expect(world.id).toBeDefined();
       expect(world.name).toBe('测试世界');
-      expect(world.startAt).toEqual(createStoryDate({ isUnknown: true }));
-      expect(world.endAt).toEqual(createStoryDate({ isUnknown: true }));
+      expect(world.startAt).toBeUndefined();
+      expect(world.endAt).toBeUndefined();
     });
 
     it('应该创建带有parents的World对象', () => {
@@ -95,7 +95,9 @@ describe('World', () => {
         name: '测试世界',
       };
 
-      expect(() => fromWorld(worldData)).toThrow('Invalid World: startAt is required');
+      const world = fromWorld(worldData);
+      expect(world.startAt).toBeUndefined();
+      expect(world.endAt).toBeUndefined();
     });
 
     it('应该从带有description的对象创建World对象', () => {

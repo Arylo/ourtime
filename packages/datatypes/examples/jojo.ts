@@ -58,33 +58,39 @@ const esidisi = story.appendWho({ name: '艾西迪西', description: '卡兹的�
 const wanuu = story.appendWho({ name: '瓦姆乌', description: '卡兹的忠实追随者' });
 const santana = story.appendWho({ name: '桑塔纳', description: '卡兹的忠实追随者' });
 
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '卡兹出生',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC30000Approx,
   endAt: dateMap.BC30000Approx,
 })
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '卡兹发明石鬼面',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC10000Approx,
   endAt: dateMap.BC10000Approx,
 })
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '艾西迪西出生',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC30000_10000Approx,
   endAt: dateMap.BC30000_10000Approx,
 })
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '瓦姆乌出生',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC10000Approx,
   endAt: dateMap.BC10000Approx,
 })
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '桑塔纳出生',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC10000Approx,
   endAt: dateMap.BC10000Approx,
 })
-secondPartTimeline.appendHistory({
+story.appendHistory({
   name: '首次出现柱之男, 石鬼面相关的记录',
+}).associateTimeline(secondPartTimeline, {
   startAt: dateMap.BC3000Approx,
   endAt: dateMap.BC3000Approx,
 })

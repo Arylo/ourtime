@@ -3,9 +3,7 @@ import { Story } from "../types/Story";
 import { createTimeline, Timeline } from "../types/Timeline";
 import { World } from "../types/World";
 import { createWorldTimeline } from "../types/WorldTimeline";
-import { createStoryDate } from "../types/StoryDate";
-import { createHistory } from "../types/History";
-import { newHistory } from "./history";
+import { createStoryDate, StoryDate } from "../types/StoryDate";
 
 export class TimelineInstance {
   private timelineId: Timeline['id']
@@ -60,9 +58,5 @@ export class TimelineInstance {
     P extends Parameters<typeof createStoryDate>[0]
   >(options: P) {
     return createStoryDate(options);
-  }
-
-  public appendHistory(historyData: Parameters<typeof createHistory>[0]) {
-    return newHistory(this.story, this.toObject(), historyData);
   }
 }
