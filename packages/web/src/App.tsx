@@ -1,11 +1,13 @@
-import './App.css'
+import { Suspense, lazy } from 'react'
+import LoadingPage from "./pages/LoadingPage/LoadingPage.tsx"
 
-function App() {
+const AppProvider = lazy(() => import('./components/Provider/AppProvider.tsx'))
+const Pages = lazy(() => import('./pages/Page/Pages.tsx'))
 
-  return (
-    <>
-    </>
-  )
+export default function App () {
+  return <Suspense fallback={<LoadingPage />}>
+    <AppProvider>
+      <Pages />
+    </AppProvider>
+  </Suspense>
 }
-
-export default App

@@ -3,7 +3,7 @@ import { createOrganize, Organize } from "../types/Organize";
 import { Story } from "../types/Story";
 import { Who } from "../types/Who";
 import { loadWho } from "./who";
-import { createOrganizeWho, OrganizeWho, OrganizeWhoRole } from "../types/OrganizeWho";
+import { createOrganizeWho, OrganizeWhoRole } from "../types/OrganizeWho";
 import type { WhoInstance } from "./WhoInstance";
 import { StoryDate } from "../types/StoryDate";
 
@@ -16,6 +16,62 @@ export class OrganizeInstance {
 
   public toObject() {
     return this.story.map.organizes.find(o => o.id === this.organizeId)!;
+  }
+
+  public get name () {
+    return this.toObject().name;
+  }
+
+  public set name (newName: string) {
+    this.toObject().name = newName;
+  }
+
+  public get description () {
+    return this.toObject().description ?? '';
+  }
+
+  public set description (newDescription: string) {
+    this.toObject().description = newDescription;
+  }
+
+  public get affiliatedId () {
+    return this.toObject().affiliatedId;
+  }
+
+  public set affiliatedId (newAffiliatedId: string | undefined) {
+    this.toObject().affiliatedId = newAffiliatedId;
+  }
+
+  public get startAt () {
+    return this.toObject().startAt;
+  }
+
+  public set startAt (newStartAt: StoryDate | undefined) {
+    this.toObject().startAt = newStartAt;
+  }
+
+  public get endAt () {
+    return this.toObject().endAt;
+  }
+
+  public set endAt (newEndAt: StoryDate | undefined) {
+    this.toObject().endAt = newEndAt;
+  }
+
+  public get appeared () {
+    return this.toObject().appeared ?? false;
+  }
+
+  public set appeared (value: boolean) {
+    this.toObject().appeared = value;
+  }
+
+  public get departed () {
+    return this.toObject().departed ?? false;
+  }
+
+  public set departed (value: boolean) {
+    this.toObject().departed = value;
   }
 
   constructor(private story: Story, organizeOrId: Organize['id'] | Parameters<typeof createOrganize>[0] | Organize) {

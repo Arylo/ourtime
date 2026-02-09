@@ -28,4 +28,11 @@ export type * from './types/ItemWorld';
 export type * from './types/Calendar';
 export type * from './types/StoryDate';
 export type * from './types/Story';
+
+export type { StoryInstance } from './instances/StoryInstance';
+export type { WorldInstance } from './instances/WorldInstance';
+export type { CalendarInstance } from './instances/CalendarInstance';
+export type { OrganizeInstance } from './instances/OrganizeInstance';
+export type { WhoInstance } from './instances/WhoInstance';
+export type { ItemInstance } from './instances/ItemInstance';
 export { newStory, loadStory } from './instances/story';

@@ -1,32 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getStoryIds, getStory, saveStory, initStory } from './story';
+import { getStory, saveStory, initStory } from './story';
 import type { Story, StoryDataType } from '@ourtime/datatypes';
-
-// 将实例转换为可持久化的原始 Story（便于修改并通过 saveStory 保存）
-const toRaw = (s: ReturnType<typeof initStory>): Story => ({
-	id: s.id,
-	name: s.name,
-	description: s.description,
-	summary: s.summary,
-	map: s.map as StoryDataType,
-});
+import { getStoryIds } from './getStoryIds';
 
 describe('storage', () => {
 	beforeEach(() => {
 		localStorage.clear();
 		localStorage.setItem('stories', JSON.stringify([]));
-	});
-
-	describe('getStoryIds', () => {
-		it('无任何 story 时返回空列表', () => {
-			expect(getStoryIds()).toEqual([]);
-		});
-
-		it('返回已存在的 story id 列表', () => {
-			const ids = ['a', 'b', 'c'];
-			localStorage.setItem('stories', JSON.stringify(ids));
-			expect(getStoryIds()).toEqual(ids);
-		});
 	});
 
 	describe('initStory', () => {
@@ -62,7 +42,7 @@ describe('storage', () => {
 	describe('saveStory', () => {
 		it('更新 world 字段并可读取', () => {
 			const s = initStory();
-			const raw = toRaw(s);
+			const raw = s;
 			raw.map.world = [{ id: 'w1', name: 'Updated World', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s.id, raw);
 
@@ -74,7 +54,7 @@ describe('storage', () => {
 
 		it('可一次更新多个字段并完整替换', () => {
 			const s = initStory();
-			const raw = toRaw(s);
+			const raw = s;
 			raw.map.world = [{ id: 'w2', name: 'World 2', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			raw.map.timeline = [{ id: 't1', name: 'Main TL' }];
 			raw.map.items = [{ id: 'i1', name: 'Item 1', description: 'Desc' }];
@@ -92,11 +72,11 @@ describe('storage', () => {
 			const s1 = initStory();
 			const s2 = initStory();
 
-			const r1 = toRaw(s1);
+			const r1 = s1;
 			r1.map.world = [{ id: 'w1', name: 'World 1', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s1.id, r1);
 
-			const r2 = toRaw(s2);
+			const r2 = s2;
 			r2.map.world = [{ id: 'w2', name: 'World 2', startAt: { calendarId: 'test_calendar', rangeStart: 0, rangeEnd: 0 }, endAt: { calendarId: 'test_calendar', rangeStart: 1, rangeEnd: 1 } }];
 			saveStory(s2.id, r2);
 

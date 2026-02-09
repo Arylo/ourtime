@@ -15,6 +15,10 @@ export class WorldInstance {
     return this.worldId;
   }
 
+  public getName () {
+    return this.toObject().name;
+  }
+
   public toObject () {
     return this.story.map.world.find(w => w.id === this.worldId)!;
   }

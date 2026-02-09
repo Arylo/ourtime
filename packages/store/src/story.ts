@@ -1,7 +1,7 @@
-import { loadStory, newStory, Story } from '@ourtime/datatypes'
+import { loadStory, newStory, Story, StoryInstance } from '@ourtime/datatypes'
 import storage from './storage'
 
-export function getStoryIds() {
+function getStoryIds() {
   return storage.getJSONList<string>('stories')
 }
 
@@ -13,8 +13,8 @@ export function getStory (id: string): ReturnType<typeof loadStory> {
   return loadStory(storage.getJSONObject(`story-${id}`) as any)
 }
 
-export function saveStory (id: string, value: Story) {
-  storage.setJSONObject(`story-${id}`, value)
+export function saveStory (id: string, value: StoryInstance) {
+  storage.setJSONObject(`story-${id}`, value.toObject())
 }
 
 export function initStory(): ReturnType<typeof newStory> {
@@ -23,6 +23,6 @@ export function initStory(): ReturnType<typeof newStory> {
   const storyIds = getStoryIds()
   storyIds.push(id)
   storage.setJSONList('stories', storyIds)
-  saveStory(id, story.toObject())
+  saveStory(id, story)
   return story
 }

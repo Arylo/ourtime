@@ -6,8 +6,40 @@ import { Story } from "../types/Story";
 export class CalendarInstance {
   private calendarId: Calendar['id'];
 
-  public get id() {
+  public get id () {
     return this.calendarId;
+  }
+
+  public get name () {
+    return this.toObject().name;
+  }
+
+  public set name (name: string) {
+    this.toObject().name = name;
+  }
+
+  public get description () {
+    return this.toObject().description ?? '';
+  }
+
+  public set description (description: string) {
+    this.toObject().description = description;
+  }
+
+  public get alias () {
+    return this.toObject().alias ?? [];
+  }
+
+  public set alias (alias: string[]) {
+    this.toObject().alias = alias;
+  }
+
+  public get months () {
+    return this.toObject().months;
+  }
+
+  public set months (months: Calendar['months']) {
+    this.toObject().months = months;
   }
 
   public toObject() {

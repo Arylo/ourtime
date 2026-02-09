@@ -34,12 +34,24 @@ export class StoryInstance {
     return this.story.name;
   }
 
+  public set name (name: string) {
+    this.story.name = name;
+  }
+
   public get description () {
-    return this.story.description;
+    return this.story.description ?? '';
+  }
+
+  public set description (description: string) {
+    this.story.description = description;
   }
 
   public get summary () {
-    return this.story.summary;
+    return this.story.summary ?? '';
+  }
+
+  public set summary (summary: string) {
+    this.story.summary = summary;
   }
 
   public get map () {
@@ -108,6 +120,21 @@ export class StoryInstance {
     return newOrganize(this.story, organize);
   }
 
+  public findOrganizeById(id: string) {
+    const organizeData = this.story.map.organizes.find(o => o.id === id);
+    if (!organizeData) {
+      return null;
+    }
+    return loadOrganize(this.story, organizeData);
+  }
+
+  public removeOrganizeById (id: string) {
+    const index = this.story.map.organizes.findIndex(o => o.id === id);
+    if (index !== -1) {
+      this.story.map.organizes.splice(index, 1);
+    }
+  }
+
   public listCalendars() {
     return this.story.map.calendars.map(c => newCalendar(this.story, c));
   }
@@ -117,6 +144,21 @@ export class StoryInstance {
     this.story.map.calendars.push(calendar);
 
     return newCalendar(this.story, calendar)
+  }
+
+  public findCalendarById(id: string) {
+    const calendarData = this.story.map.calendars.find(c => c.id === id);
+    if (!calendarData) {
+      return null;
+    }
+    return newCalendar(this.story, calendarData);
+  }
+
+  public removeCalendarById (id: string) {
+    const index = this.story.map.calendars.findIndex(c => c.id === id);
+    if (index !== -1) {
+      this.story.map.calendars.splice(index, 1);
+    }
   }
 
   public appendWho(who: Parameters<typeof createWho>[0]) {

@@ -4,7 +4,7 @@ import { StoryInstance } from "./StoryInstance";
 export function newStory(...args: Parameters<typeof createStory>) {
   const instance = new StoryInstance(...args)
   // 创建一个默认的故事世界
-  instance.appendWorld({ name: '故事世界' });
+  instance.appendWorld({ name: '故事世界', appeared: true });
   return instance;
 }
 

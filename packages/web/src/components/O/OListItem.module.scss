@@ -1,0 +1,8 @@
+.OListItem {
+  &:has(~ &) {
+    --at-apply: rounded-b-0;
+  }
+  &:not(:first-child) {
+    --at-apply: rounded-t-0 b-t-0;
+  }
+}
